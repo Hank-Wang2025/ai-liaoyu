@@ -1,0 +1,71 @@
+# FastAPI and server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+
+# Database
+aiosqlite>=0.19.0
+
+# Data validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Async support
+anyio>=4.2.0
+
+# Logging
+loguru>=0.7.2
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+hypothesis>=6.92.0
+
+# Utilities
+python-dotenv>=1.0.0
+PyYAML>=6.0.0
+
+# Security and Encryption
+cryptography>=41.0.0
+PyJWT>=2.8.0
+
+# Audio processing
+numpy>=1.24.0
+soundfile>=0.12.0
+sounddevice>=0.4.6
+
+# Image/Video processing
+opencv-python>=4.8.0
+mediapipe>=0.10.0
+
+# AI Models - SenseVoice (语音识别和情感分析)
+# Note: funasr requires separate installation
+# pip install funasr modelscope
+# Models will be downloaded on first use
+
+# AI Models - emotion2vec+ (情绪识别)
+# Included in funasr package
+
+# AI Models - CosyVoice (语音合成)
+# Note: CosyVoice requires separate installation
+# git clone https://github.com/FunAudioLLM/CosyVoice.git
+# cd CosyVoice && pip install -r requirements.txt
+# Models will be downloaded on first use
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# AI Models - Face Analysis (面部分析)
+# MediaPipe is included above
+
+# BLE Communication (心率设备)
+bleak>=0.21.0
+
+# Smart Light Control (智能灯光)
+yeelight>=0.7.0
+aiohttp>=3.9.0  # 飞利浦 Hue API
+# python-miio>=0.5.0  # 小米米家（可选，按需安装）
+# tinytuya>=1.12.0  # 涂鸦智能（可选，按需安装）
+# PyDMX>=0.2.0  # DMX512 专业灯光（可选，按需安装）
+
+# PDF Generation (报告导出)
+reportlab>=4.0.0

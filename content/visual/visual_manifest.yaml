@@ -1,0 +1,517 @@
+# 视觉资源清单
+# Visual Resource Manifest for Healing Pod System
+#
+# 说明：此文件定义了系统所需的所有视觉资源
+# 实际视频文件需要单独准备并放置在 content/visual/ 目录下
+
+version: "1.0"
+last_updated: "2024-01-01"
+
+# ============================================
+# 自然风光 - Natural Landscapes (10种)
+# ============================================
+natural_landscapes:
+  - id: ink_mountain
+    filename: ink_mountain.mp4
+    name: 水墨山水
+    description: 中式水墨风格的山水画动画，云雾缭绕
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: serene
+    loop: true
+    
+  - id: bamboo_forest
+    filename: bamboo_forest.mp4
+    name: 竹林清风
+    description: 微风吹拂的竹林，光影斑驳
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: peaceful
+    loop: true
+    
+  - id: lotus_pond
+    filename: lotus_pond.mp4
+    name: 荷塘月色
+    description: 宁静的荷塘，荷叶轻摇
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: tranquil
+    loop: true
+    
+  - id: ocean_waves
+    filename: ocean_waves.mp4
+    name: 海浪轻拍
+    description: 轻柔的海浪拍打沙滩
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: calming
+    loop: true
+    
+  - id: deep_forest
+    filename: deep_forest.mp4
+    name: 深林幽径
+    description: 阳光透过树冠的森林小径
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: grounding
+    loop: true
+    
+  - id: waterfall
+    filename: waterfall.mp4
+    name: 飞瀑流泉
+    description: 壮观的瀑布，水雾弥漫
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: powerful
+    loop: true
+    
+  - id: sunrise_mountain
+    filename: sunrise_mountain.mp4
+    name: 山间日出
+    description: 壮丽的山间日出，金光万道
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: hopeful
+    loop: true
+    
+  - id: calm_lake
+    filename: calm_lake.mp4
+    name: 静谧湖面
+    description: 平静如镜的湖面，倒映蓝天
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: peaceful
+    loop: true
+    
+  - id: morning_meadow
+    filename: morning_meadow.mp4
+    name: 晨曦草原
+    description: 清晨的草原，露珠闪烁
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: fresh
+    loop: true
+    
+  - id: sunlit_clearing
+    filename: sunlit_clearing.mp4
+    name: 阳光林间
+    description: 阳光洒落的森林空地
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: bright
+    loop: true
+
+# ============================================
+# 天空与星空 - Sky & Stars (6种)
+# ============================================
+sky_scenes:
+  - id: northern_lights
+    filename: northern_lights.mp4
+    name: 极光舞动
+    description: 绚丽的北极光在夜空中舞动
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: magical
+    loop: true
+    
+  - id: clouds_sky
+    filename: clouds_sky.mp4
+    name: 云卷云舒
+    description: 蓝天白云缓缓流动
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: peaceful
+    loop: true
+    
+  - id: starry_night
+    filename: starry_night.mp4
+    name: 繁星点点
+    description: 璀璨的星空，银河横跨
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: dreamy
+    loop: true
+    
+  - id: moon_clouds
+    filename: moon_clouds.mp4
+    name: 月隐云中
+    description: 月亮在云层中若隐若现
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: sleepy
+    loop: true
+    
+  - id: gentle_aurora
+    filename: gentle_aurora.mp4
+    name: 柔和极光
+    description: 柔和的极光，适合入眠
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: drowsy
+    loop: true
+    
+  - id: rainbow_sky
+    filename: rainbow_sky.mp4
+    name: 彩虹天空
+    description: 雨后彩虹横跨天际
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: hopeful
+    loop: true
+
+# ============================================
+# 花园与植物 - Gardens & Plants (5种)
+# ============================================
+garden_scenes:
+  - id: spring_garden
+    filename: spring_garden.mp4
+    name: 春日花园
+    description: 繁花盛开的春日花园
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: joyful
+    loop: true
+    
+  - id: blooming_flowers
+    filename: blooming_flowers.mp4
+    name: 花开时节
+    description: 花朵绽放的延时摄影
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: hopeful
+    loop: true
+    
+  - id: zen_garden
+    filename: zen_garden.mp4
+    name: 禅意庭院
+    description: 日式枯山水庭院
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: meditative
+    loop: true
+    
+  - id: butterfly_garden
+    filename: butterfly_garden.mp4
+    name: 蝴蝶花园
+    description: 蝴蝶在花丛中飞舞
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: gentle
+    loop: true
+    
+  - id: soft_petals
+    filename: soft_petals.mp4
+    name: 花瓣飘落
+    description: 柔软的花瓣缓缓飘落
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: tender
+    loop: true
+
+# ============================================
+# 抽象动画 - Abstract Animations (6种)
+# ============================================
+abstract_animations:
+  - id: yin_yang_flow
+    filename: yin_yang_flow.mp4
+    name: 阴阳流转
+    description: 太极阴阳图的流动动画
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: balanced
+    loop: true
+    
+  - id: tai_chi_flow
+    filename: tai_chi_flow.mp4
+    name: 太极流动
+    description: 太极动作的抽象表现
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: flowing
+    loop: true
+    
+  - id: geometric_flow
+    filename: geometric_flow.mp4
+    name: 几何流动
+    description: 几何图形的流动变化
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: focused
+    loop: true
+    
+  - id: breathing_circle
+    filename: breathing_circle.mp4
+    name: 呼吸圆环
+    description: 随呼吸节奏扩张收缩的圆环
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: calming
+    loop: true
+    
+  - id: heart_glow
+    filename: heart_glow.mp4
+    name: 心光闪耀
+    description: 温暖的心形光芒脉动
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: loving
+    loop: true
+    
+  - id: calm_blue
+    filename: calm_blue.mp4
+    name: 宁静蓝调
+    description: 平静的蓝色渐变动画
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: calming
+    loop: true
+
+# ============================================
+# 水墨与传统 - Ink & Traditional (4种)
+# ============================================
+traditional_scenes:
+  - id: temple_garden
+    filename: temple_garden.mp4
+    name: 古刹庭院
+    description: 宁静的寺庙庭院
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: serene
+    loop: true
+    
+  - id: moonlit_garden
+    filename: moonlit_garden.mp4
+    name: 月下庭院
+    description: 月光下的中式庭院
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: peaceful
+    loop: true
+    
+  - id: warm_candlelight
+    filename: warm_candlelight.mp4
+    name: 烛光摇曳
+    description: 温暖的烛光在黑暗中摇曳
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: warm
+    loop: true
+    
+  - id: ancient_tree
+    filename: ancient_tree.mp4
+    name: 古树参天
+    description: 古老的大树，枝繁叶茂
+    duration: 300
+    resolution: 4K
+    style: chinese
+    mood: grounding
+    loop: true
+
+# ============================================
+# 海滩与水景 - Beach & Water (4种)
+# ============================================
+water_scenes:
+  - id: sunrise_beach
+    filename: sunrise_beach.mp4
+    name: 海滩日出
+    description: 海滩上的美丽日出
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: hopeful
+    loop: true
+    
+  - id: golden_sunset
+    filename: golden_sunset.mp4
+    name: 金色夕阳
+    description: 金色的夕阳西下
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: warm
+    loop: true
+    
+  - id: waves_crashing
+    filename: waves_crashing.mp4
+    name: 浪花拍岸
+    description: 海浪拍打礁石
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: powerful
+    loop: true
+    
+  - id: clear_water
+    filename: clear_water.mp4
+    name: 清澈水流
+    description: 清澈见底的水流
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: clear
+    loop: true
+
+# ============================================
+# 森林场景 - Forest Scenes (4种)
+# ============================================
+forest_scenes:
+  - id: forest_path
+    filename: forest_path.mp4
+    name: 林间小径
+    description: 蜿蜒的森林小径
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: peaceful
+    loop: true
+    
+  - id: forest_stream
+    filename: forest_stream.mp4
+    name: 林间溪流
+    description: 森林中的清澈溪流
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: refreshing
+    loop: true
+    
+  - id: sunlight_forest
+    filename: sunlight_forest.mp4
+    name: 阳光森林
+    description: 阳光穿透树冠的森林
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: energizing
+    loop: true
+    
+  - id: rain_window
+    filename: rain_window.mp4
+    name: 窗外雨景
+    description: 透过窗户看雨滴落下
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: cozy
+    loop: true
+
+# ============================================
+# 其他场景 - Other Scenes (3种)
+# ============================================
+other_scenes:
+  - id: bright_sky
+    filename: bright_sky.mp4
+    name: 明亮天空
+    description: 明亮的蓝天
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: bright
+    loop: true
+    
+  - id: bright_horizon
+    filename: bright_horizon.mp4
+    name: 明亮地平线
+    description: 明亮的地平线
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: hopeful
+    loop: true
+    
+  - id: serene_lake
+    filename: serene_lake.mp4
+    name: 宁静湖泊
+    description: 宁静的湖泊风光
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: peaceful
+    loop: true
+
+# ============================================
+# 特殊效果场景 - Special Effects (2种)
+# ============================================
+special_effects:
+  - id: ocean_storm_calm
+    filename: ocean_storm_calm.mp4
+    name: 风暴后的平静
+    description: 从风暴到平静的海面过渡
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: transitional
+    loop: true
+    
+  - id: light_particles
+    filename: light_particles.mp4
+    name: 光粒子
+    description: 漂浮的光粒子效果
+    duration: 300
+    resolution: 4K
+    style: modern
+    mood: magical
+    loop: true
+
+# ============================================
+# 视频规格要求 - Video Specifications
+# ============================================
+specifications:
+  format: mp4
+  codec: H.264 or H.265
+  resolution: 3840x2160 (4K)
+  frame_rate: 30fps
+  bit_rate: 25-50 Mbps
+  color_space: sRGB
+  
+  requirements:
+    - 所有视频必须无版权问题或已获得授权
+    - 视频应有平滑的循环点，无明显跳跃
+    - 避免快速闪烁或刺眼的画面
+    - 色调应柔和，适合长时间观看
+    - 建议包含多种色调版本（暖色/冷色）
+
+# ============================================
+# 统计信息 - Statistics
+# ============================================
+statistics:
+  total_natural_landscapes: 10
+  total_sky_scenes: 6
+  total_garden_scenes: 5
+  total_abstract_animations: 6
+  total_traditional_scenes: 4
+  total_water_scenes: 4
+  total_forest_scenes: 4
+  total_other_scenes: 3
+  total_special_effects: 2
+  total_visual_files: 44

@@ -1,0 +1,159 @@
+# ============================================================
+# 智能疗愈仓数据保留策略配置
+# Healing Pod Data Retention Policy Configuration
+# ============================================================
+#
+# 此配置文件定义用户数据的保留和清理策略
+# 符合数据隐私保护要求
+#
+# ============================================================
+
+# 全局设置
+global:
+  # 是否启用自动数据清理
+  auto_cleanup_enabled: true
+  
+  # 清理任务执行时间（每天）
+  cleanup_schedule: "03:00"
+  
+  # 清理前是否备份
+  backup_before_cleanup: true
+  
+  # 备份保留天数
+  backup_retention_days: 30
+
+# ============================================================
+# 会话数据保留策略
+# ============================================================
+session_data:
+  # 会话记录保留天数（0 表示永久保留）
+  retention_days: 90
+  
+  # 是否保留匿名化的统计数据
+  keep_anonymized_stats: true
+  
+  # 匿名化统计数据保留天数
+  anonymized_stats_retention_days: 365
+
+# ============================================================
+# 生物特征数据保留策略
+# ============================================================
+biometric_data:
+  # 心率数据
+  heart_rate:
+    # 原始数据保留天数
+    raw_data_retention_days: 7
+    # 聚合数据（每分钟平均值）保留天数
+    aggregated_retention_days: 30
+    # HRV 分析结果保留天数
+    hrv_analysis_retention_days: 90
+  
+  # 面部表情数据
+  facial_expression:
+    # 原始帧数据保留天数（通常不保留）
+    raw_frames_retention_days: 0
+    # 情绪分析结果保留天数
+    emotion_analysis_retention_days: 30
+  
+  # 语音数据
+  voice:
+    # 原始音频保留天数（通常不保留）
+    raw_audio_retention_days: 0
+    # 语音分析结果保留天数
+    analysis_retention_days: 30
+
+# ============================================================
+# 疗愈报告保留策略
+# ============================================================
+reports:
+  # 疗愈报告保留天数
+  retention_days: 180
+  
+  # 是否允许用户导出报告
+  allow_export: true
+  
+  # 导出格式
+  export_formats:
+    - pdf
+    - json
+
+# ============================================================
+# 用户偏好设置保留策略
+# ============================================================
+user_preferences:
+  # 用户偏好设置保留天数（0 表示永久保留）
+  retention_days: 0
+  
+  # 用户删除账户后的数据保留天数
+  post_deletion_retention_days: 30
+
+# ============================================================
+# 系统日志保留策略
+# ============================================================
+system_logs:
+  # 应用日志保留天数
+  app_logs_retention_days: 30
+  
+  # 错误日志保留天数
+  error_logs_retention_days: 90
+  
+  # 审计日志保留天数
+  audit_logs_retention_days: 365
+  
+  # 设备日志保留天数
+  device_logs_retention_days: 14
+
+# ============================================================
+# 数据导出设置
+# ============================================================
+data_export:
+  # 是否允许用户导出个人数据
+  allow_user_export: true
+  
+  # 导出请求处理时间（小时）
+  export_processing_hours: 24
+  
+  # 导出文件保留天数
+  export_file_retention_days: 7
+  
+  # 导出格式
+  formats:
+    - json
+    - csv
+
+# ============================================================
+# 数据删除设置
+# ============================================================
+data_deletion:
+  # 是否允许用户请求删除数据
+  allow_user_deletion: true
+  
+  # 删除请求处理时间（小时）
+  deletion_processing_hours: 72
+  
+  # 删除前的确认等待期（天）
+  confirmation_waiting_days: 7
+  
+  # 是否发送删除确认通知
+  send_deletion_confirmation: true
+
+# ============================================================
+# 数据加密设置
+# ============================================================
+encryption:
+  # 静态数据加密
+  at_rest:
+    enabled: true
+    algorithm: "AES-256-GCM"
+  
+  # 传输中数据加密
+  in_transit:
+    enabled: true
+    min_tls_version: "1.2"
+  
+  # 敏感字段加密
+  sensitive_fields:
+    - heart_rate_data
+    - facial_features
+    - voice_samples
+    - emotion_scores

@@ -1,0 +1,89 @@
+# 焦虑缓解方案 - 中式风格（调息养神）
+id: anxiety_relief_chinese
+name: 调息养神 - 焦虑缓解
+description: 采用中式传统调息方法，通过呼吸引导和舒缓音乐帮助缓解焦虑情绪
+target_emotions:
+  - anxious
+  - fearful
+intensity: medium
+style: chinese
+duration: 900  # 15分钟
+
+phases:
+  - name: 入静阶段
+    duration: 180  # 3分钟
+    light:
+      color: "#4A90A4"  # 青蓝色
+      brightness: 40
+      transition: 5000
+      pattern: static
+    audio:
+      file: content/audio/chinese_guqin_calm.mp3
+      volume: 60
+      loop: true
+      fade_in: 3000
+      fade_out: 2000
+    visual:
+      file: content/visual/ink_mountain.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 请您找一个舒适的姿势坐好，轻轻闭上眼睛。让我们一起开始这段宁静的旅程。深深地吸一口气，感受空气缓缓进入身体...
+      voice: 中文女
+      emotion: calm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 3
+
+  - name: 调息阶段
+    duration: 420  # 7分钟
+    light:
+      color: "#5BA3B0"  # 浅青色
+      brightness: 50
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/nature_stream.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/bamboo_forest.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 现在，让我们开始调息。吸气...二...三...四...屏住...二...三...呼气...二...三...四...五...六...感受每一次呼吸带来的平静...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 养神阶段
+    duration: 300  # 5分钟
+    light:
+      color: "#6BB5A2"  # 青绿色
+      brightness: 60
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/chinese_flute.mp3
+      volume: 55
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/lotus_pond.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 很好，您做得非常好。现在让身心完全放松，感受内心的宁静。焦虑正在慢慢消散，取而代之的是平和与安宁...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 3

@@ -1,0 +1,92 @@
+# 愤怒释放方案 - 现代风格
+id: anger_release_modern
+name: 情绪释放 - 愤怒缓解
+description: 采用现代情绪释放技术，通过引导式呼吸和身体放松帮助释放愤怒情绪
+target_emotions:
+  - angry
+  - anxious
+intensity: high
+style: modern
+duration: 900  # 15分钟
+
+phases:
+  - name: 情绪觉察
+    duration: 180  # 3分钟
+    light:
+      color: "#4682B4"  # 钢蓝色
+      brightness: 35
+      transition: 5000
+      pattern: static
+    audio:
+      file: content/audio/deep_bass_calm.mp3
+      volume: 50
+      loop: true
+      fade_in: 3000
+      fade_out: 2000
+    visual:
+      file: content/visual/ocean_storm_calm.mp4
+      loop: true
+      brightness: 60
+    voice_guide:
+      text: 欢迎来到这个安全的空间。无论你现在感受到多强烈的情绪，这里都是安全的。让我们一起，慢慢地觉察这些情绪...
+      voice: 中文女
+      emotion: calm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 4
+
+  - name: 能量释放
+    duration: 360  # 6分钟
+    light:
+      color: "#5F9EA0"  # 军蓝色
+      brightness: 45
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/rhythmic_drums.mp3
+      volume: 55
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/waves_crashing.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 现在，让我们通过呼吸释放这些能量。深深吸气...感受胸腔的扩张...然后用力呼出...想象愤怒随着呼气离开身体...
+      voice: 中文女
+      emotion: calm
+      speed: 0.85
+    chair:
+      mode: deep
+      intensity: 6
+
+  - name: 平静回归
+    duration: 360  # 6分钟
+    light:
+      color: "#87CEEB"  # 天蓝色
+      brightness: 55
+      transition: 4000
+      pattern: static
+    audio:
+      file: content/audio/peaceful_strings.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/calm_lake.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 很好，你做得非常好。现在让身心慢慢平静下来。感受内心的湖面逐渐变得平静，倒映着蓝天白云...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 4
+    scent:
+      scent_type: eucalyptus
+      intensity: 4

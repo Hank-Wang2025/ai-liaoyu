@@ -1,0 +1,93 @@
+# 情绪平衡方案 - 中式风格
+id: emotional_balance_chinese
+name: 调和阴阳 - 情绪平衡
+description: 采用中式阴阳调和理念，帮助恢复情绪平衡和内心和谐
+target_emotions:
+  - neutral
+  - sad
+  - anxious
+intensity: medium
+style: chinese
+duration: 1200  # 20分钟
+
+phases:
+  - name: 静心入定
+    duration: 300  # 5分钟
+    light:
+      color: "#8FBC8F"  # 暗海绿
+      brightness: 45
+      transition: 5000
+      pattern: static
+    audio:
+      file: content/audio/chinese_guzheng.mp3
+      volume: 50
+      loop: true
+      fade_in: 4000
+      fade_out: 2000
+    visual:
+      file: content/visual/yin_yang_flow.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 让我们回归内心的平衡。在中国传统智慧中，阴阳调和是健康的根本。现在，让我们一起找回这份和谐...
+      voice: 中文女
+      emotion: calm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 3
+    scent:
+      scent_type: tea_tree
+      intensity: 4
+
+  - name: 阴阳调和
+    duration: 540  # 9分钟
+    light:
+      color: "#9ACD32"  # 黄绿色
+      brightness: 55
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/five_elements.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/tai_chi_flow.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 想象体内有两股能量，一阴一阳，如太极图般流转。吸气时，阳气上升；呼气时，阴气下沉。两者相互交融，达到完美的平衡...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 和谐圆满
+    duration: 360  # 6分钟
+    light:
+      color: "#98FB98"  # 淡绿色
+      brightness: 60
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/harmony_bells.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/zen_garden.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 感受内心的和谐与平衡。你的身心现在处于最佳状态。带着这份平和，你可以从容面对生活中的一切...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 3

@@ -1,0 +1,90 @@
+# 快速平静方案
+id: quick_calm
+name: 即刻平静 - 快速放松
+description: 5分钟快速放松方案，适合紧急情况下快速恢复平静
+target_emotions:
+  - anxious
+  - angry
+  - fearful
+intensity: high
+style: modern
+duration: 300  # 5分钟
+
+phases:
+  - name: 紧急着陆
+    duration: 90  # 1.5分钟
+    light:
+      color: "#4169E1"  # 皇家蓝
+      brightness: 40
+      transition: 2000
+      pattern: static
+    audio:
+      file: content/audio/instant_calm.mp3
+      volume: 55
+      loop: true
+      fade_in: 1000
+      fade_out: 1000
+    visual:
+      file: content/visual/calm_blue.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 停下来。深呼吸。你是安全的。让我们用接下来的几分钟，快速找回平静。跟着我的声音，深深吸气...慢慢呼出...
+      voice: 中文女
+      emotion: calm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 4
+
+  - name: 快速呼吸
+    duration: 120  # 2分钟
+    light:
+      color: "#6495ED"  # 矢车菊蓝
+      brightness: 50
+      transition: 1500
+      pattern: breath
+    audio:
+      file: content/audio/heartbeat_slow.mp3
+      volume: 50
+      loop: true
+      fade_in: 1000
+      fade_out: 1000
+    visual:
+      file: content/visual/breathing_circle.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 4-7-8呼吸法。吸气4秒...1...2...3...4...屏住7秒...1...2...3...4...5...6...7...呼气8秒...1...2...3...4...5...6...7...8...再来一次...
+      voice: 中文女
+      emotion: calm
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 5
+
+  - name: 平静回归
+    duration: 90  # 1.5分钟
+    light:
+      color: "#87CEEB"  # 天蓝色
+      brightness: 60
+      transition: 2000
+      pattern: static
+    audio:
+      file: content/audio/peaceful_end.mp3
+      volume: 50
+      loop: true
+      fade_in: 1000
+      fade_out: 2000
+    visual:
+      file: content/visual/serene_lake.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 很好。感受平静正在回归。你已经做得很好了。带着这份平静，继续你的一天。
+      voice: 中文女
+      emotion: warm
+      speed: 0.95
+    chair:
+      mode: relax
+      intensity: 3

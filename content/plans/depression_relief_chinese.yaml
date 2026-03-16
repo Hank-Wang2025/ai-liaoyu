@@ -1,0 +1,92 @@
+# 低落情绪缓解方案 - 中式风格
+id: depression_relief_chinese
+name: 舒心解郁 - 情绪低落缓解
+description: 采用中式传统方法，通过温暖的引导和舒缓音乐帮助缓解低落情绪
+target_emotions:
+  - sad
+  - tired
+intensity: medium
+style: chinese
+duration: 1200  # 20分钟
+
+phases:
+  - name: 温暖开启
+    duration: 240  # 4分钟
+    light:
+      color: "#FFB347"  # 暖橙色
+      brightness: 50
+      transition: 5000
+      pattern: static
+    audio:
+      file: content/audio/chinese_pipa.mp3
+      volume: 55
+      loop: true
+      fade_in: 3000
+      fade_out: 2000
+    visual:
+      file: content/visual/sunrise_mountain.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 亲爱的朋友，感谢你来到这里。无论你现在感受如何，都是被接纳的。让我们一起，慢慢地，找回内心的温暖...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 4
+    scent:
+      scent_type: sandalwood
+      intensity: 4
+
+  - name: 舒展身心
+    duration: 480  # 8分钟
+    light:
+      color: "#FFDAB9"  # 桃色
+      brightness: 60
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/nature_birds.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/spring_garden.mp4
+      loop: true
+      brightness: 85
+    voice_guide:
+      text: 想象温暖的阳光洒在身上，感受它的温度。每一缕阳光都在告诉你：生命中总有美好的事物在等待着你...
+      voice: 中文女
+      emotion: encouraging
+      speed: 0.9
+    chair:
+      mode: wave
+      intensity: 5
+
+  - name: 重拾希望
+    duration: 480  # 8分钟
+    light:
+      color: "#FFE4B5"  # 鹿皮色
+      brightness: 70
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/uplifting_chinese.mp3
+      volume: 55
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/blooming_flowers.mp4
+      loop: true
+      brightness: 90
+    voice_guide:
+      text: 你已经做得很好了。每一天都是新的开始，每一刻都蕴含着可能。相信自己，你比想象中更加坚强...
+      voice: 中文女
+      emotion: encouraging
+      speed: 0.95
+    chair:
+      mode: relax
+      intensity: 4

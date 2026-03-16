@@ -1,0 +1,89 @@
+# 疲劳恢复方案
+id: fatigue_recovery
+name: 能量恢复 - 疲劳缓解
+description: 针对身心疲惫状态设计的能量恢复方案，帮助恢复活力
+target_emotions:
+  - tired
+  - neutral
+intensity: low
+style: modern
+duration: 600  # 10分钟
+
+phases:
+  - name: 轻柔唤醒
+    duration: 180  # 3分钟
+    light:
+      color: "#98FB98"  # 淡绿色
+      brightness: 45
+      transition: 4000
+      pattern: static
+    audio:
+      file: content/audio/morning_birds.mp3
+      volume: 50
+      loop: true
+      fade_in: 3000
+      fade_out: 2000
+    visual:
+      file: content/visual/morning_meadow.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 让我们轻轻地唤醒身体的能量。深呼吸，感受新鲜的空气充满肺部，带来活力...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.95
+    chair:
+      mode: gentle
+      intensity: 3
+
+  - name: 能量激活
+    duration: 240  # 4分钟
+    light:
+      color: "#90EE90"  # 浅绿色
+      brightness: 60
+      transition: 3000
+      pattern: pulse
+    audio:
+      file: content/audio/uplifting_ambient.mp3
+      volume: 55
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/sunlight_forest.mp4
+      loop: true
+      brightness: 85
+    voice_guide:
+      text: 想象金色的能量从头顶流入，流经全身每一个细胞，带来温暖和活力。你的身体正在充满能量...
+      voice: 中文女
+      emotion: encouraging
+      speed: 1.0
+    chair:
+      mode: pulse
+      intensity: 4
+
+  - name: 活力焕发
+    duration: 180  # 3分钟
+    light:
+      color: "#ADFF2F"  # 绿黄色
+      brightness: 70
+      transition: 2000
+      pattern: static
+    audio:
+      file: content/audio/positive_energy.mp3
+      volume: 60
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/bright_sky.mp4
+      loop: true
+      brightness: 90
+    voice_guide:
+      text: 很好！感受身体中流动的能量。你已经准备好迎接新的挑战。带着这份活力，开始新的旅程吧！
+      voice: 中文女
+      emotion: encouraging
+      speed: 1.0
+    chair:
+      mode: gentle
+      intensity: 3

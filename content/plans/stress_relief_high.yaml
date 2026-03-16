@@ -1,0 +1,93 @@
+# 高压力缓解方案
+id: stress_relief_high
+name: 深度放松 - 高压力缓解
+description: 针对高压力状态设计的深度放松方案，通过渐进式肌肉放松和深度呼吸帮助释放压力
+target_emotions:
+  - anxious
+  - angry
+  - tired
+intensity: high
+style: modern
+duration: 1500  # 25分钟
+
+phases:
+  - name: 压力释放
+    duration: 300  # 5分钟
+    light:
+      color: "#2E8B57"  # 海绿色
+      brightness: 30
+      transition: 6000
+      pattern: static
+    audio:
+      file: content/audio/deep_relaxation.mp3
+      volume: 50
+      loop: true
+      fade_in: 4000
+      fade_out: 2000
+    visual:
+      file: content/visual/deep_forest.mp4
+      loop: true
+      brightness: 60
+    voice_guide:
+      text: 现在，让我们开始释放身体中积累的压力。首先，紧紧握住双拳，感受手臂的紧张...保持...然后，完全放松...感受紧张消散的感觉...
+      voice: 中文女
+      emotion: calm
+      speed: 0.85
+    chair:
+      mode: deep
+      intensity: 6
+
+  - name: 渐进放松
+    duration: 600  # 10分钟
+    light:
+      color: "#3CB371"  # 中海绿
+      brightness: 40
+      transition: 5000
+      pattern: breath
+    audio:
+      file: content/audio/theta_waves.mp3
+      volume: 45
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/waterfall.mp4
+      loop: true
+      brightness: 65
+    voice_guide:
+      text: 继续这个过程...紧张肩膀...保持...放松...紧张面部肌肉...保持...放松...让每一次放松都带走一些压力...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 7
+
+  - name: 深度休息
+    duration: 600  # 10分钟
+    light:
+      color: "#66CDAA"  # 中碧绿
+      brightness: 50
+      transition: 4000
+      pattern: static
+    audio:
+      file: content/audio/nature_rain.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/rain_window.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 现在，让身体完全沉入这份宁静中。你不需要做任何事，只需要存在于这一刻。让大自然的声音洗涤你的心灵...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 5
+    scent:
+      scent_type: lavender
+      intensity: 5

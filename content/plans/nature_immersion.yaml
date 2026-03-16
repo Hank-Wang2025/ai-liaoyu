@@ -1,0 +1,120 @@
+# 自然沉浸方案
+id: nature_immersion
+name: 自然疗愈 - 森林浴
+description: 模拟森林浴体验，通过自然元素帮助恢复身心平衡
+target_emotions:
+  - tired
+  - anxious
+  - sad
+  - neutral
+intensity: low
+style: modern
+duration: 1500  # 25分钟
+
+phases:
+  - name: 进入森林
+    duration: 300  # 5分钟
+    light:
+      color: "#228B22"  # 森林绿
+      brightness: 40
+      transition: 6000
+      pattern: static
+    audio:
+      file: content/audio/forest_ambience.mp3
+      volume: 55
+      loop: true
+      fade_in: 5000
+      fade_out: 2000
+    visual:
+      file: content/visual/forest_path.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 想象你正走进一片宁静的森林。阳光透过树叶洒下斑驳的光影。深呼吸，感受清新的空气充满肺部...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 3
+    scent:
+      scent_type: pine
+      intensity: 6
+
+  - name: 林间漫步
+    duration: 600  # 10分钟
+    light:
+      color: "#32CD32"  # 酸橙绿
+      brightness: 50
+      transition: 5000
+      pattern: breath
+    audio:
+      file: content/audio/birds_stream.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/forest_stream.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 继续在森林中漫步。听，远处有溪水潺潺。鸟儿在枝头歌唱。让大自然的声音洗涤你的心灵，带走所有的疲惫和烦恼...
+      voice: 中文女
+      emotion: calm
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 树下冥想
+    duration: 420  # 7分钟
+    light:
+      color: "#3CB371"  # 中海绿
+      brightness: 55
+      transition: 4000
+      pattern: static
+    audio:
+      file: content/audio/wind_leaves.mp3
+      volume: 45
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/ancient_tree.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 找一棵古老的大树，靠着它坐下。感受树干的坚实和温暖。想象树的根深入大地，汲取能量。你也可以像这棵树一样，稳定而坚强...
+      voice: 中文女
+      emotion: warm
+      speed: 0.85
+    chair:
+      mode: relax
+      intensity: 3
+
+  - name: 带着自然离开
+    duration: 180  # 3分钟
+    light:
+      color: "#90EE90"  # 浅绿色
+      brightness: 65
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/nature_farewell.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/sunlit_clearing.mp4
+      loop: true
+      brightness: 85
+    voice_guide:
+      text: 是时候离开森林了。但大自然的宁静会一直陪伴着你。无论何时需要，你都可以在心中回到这片森林。带着这份平静，回到现实世界吧。
+      voice: 中文女
+      emotion: encouraging
+      speed: 0.95
+    chair:
+      mode: gentle
+      intensity: 2

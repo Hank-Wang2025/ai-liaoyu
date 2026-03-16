@@ -1,0 +1,92 @@
+# 低落情绪缓解方案 - 现代风格
+id: depression_relief_modern
+name: 阳光心境 - 情绪低落缓解
+description: 采用现代积极心理学方法，通过正向引导和温暖音乐帮助缓解低落情绪
+target_emotions:
+  - sad
+  - tired
+intensity: medium
+style: modern
+duration: 1200  # 20分钟
+
+phases:
+  - name: 温柔接纳
+    duration: 300  # 5分钟
+    light:
+      color: "#FFD700"  # 金色
+      brightness: 40
+      transition: 6000
+      pattern: static
+    audio:
+      file: content/audio/gentle_acoustic.mp3
+      volume: 50
+      loop: true
+      fade_in: 4000
+      fade_out: 2000
+    visual:
+      file: content/visual/golden_sunset.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 欢迎来到这个温暖的空间。无论你现在感受如何，都是被接纳的。让我们一起，慢慢地，找回内心的阳光...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 4
+
+  - name: 感恩练习
+    duration: 420  # 7分钟
+    light:
+      color: "#FFA500"  # 橙色
+      brightness: 55
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/hopeful_piano.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/sunrise_beach.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 现在，让我们一起做一个感恩练习。想一想，生活中有哪些小小的美好？也许是一杯温暖的茶，也许是朋友的微笑...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 希望重燃
+    duration: 480  # 8分钟
+    light:
+      color: "#FFFF00"  # 黄色
+      brightness: 65
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/uplifting_orchestra.mp3
+      volume: 55
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/rainbow_sky.mp4
+      loop: true
+      brightness: 85
+    voice_guide:
+      text: 你比你想象的更加坚强。每一次低谷都是成长的机会。相信自己，美好的事物正在向你走来...
+      voice: 中文女
+      emotion: encouraging
+      speed: 0.95
+    chair:
+      mode: relax
+      intensity: 4
+    scent:
+      scent_type: citrus
+      intensity: 5
