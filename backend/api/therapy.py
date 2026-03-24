@@ -1,11 +1,13 @@
 """疗愈引擎 API 路由"""
+import asyncio
+import io
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Any
 from datetime import datetime
 from loguru import logger
-import io
 
 from models.emotion import EmotionCategory, EmotionState
 from models.therapy import TherapyStyle, TherapyIntensity
@@ -14,6 +16,8 @@ from services.plan_manager import (
     UserPreferences,
     TherapyPlanSelector
 )
+from services.audio_controller import get_shared_audio_player
+from services.chair_controller import ChairControllerManager
 from services.cosyvoice_synthesizer import (
     CosyVoiceSynthesizer,
     MockCosyVoiceSynthesizer,
@@ -33,6 +37,7 @@ from services.qwen_dialog import (
     CrisisKeywordDetector,
     create_dialog_engine
 )
+from services.device_initializer import get_device_initializer
 
 router = APIRouter()
 
@@ -42,6 +47,11 @@ _plan_selector: Optional[TherapyPlanSelector] = None
 _voice_synthesizer: Optional[CosyVoiceSynthesizer] = None
 _therapy_voice_synthesizer: Optional[TherapyVoiceSynthesizer] = None
 _dialog_engine: Optional[QwenDialogEngine] = None
+_current_executor: Optional[Any] = None
+_stop_finalize_tasks: dict[str, asyncio.Task] = {}
+_stopping_session_ids: set[str] = set()
+RUNTIME_INTENSITY_MIN = 1
+RUNTIME_INTENSITY_MAX = 5
 
 
 def get_plan_manager() -> PlanManager:
@@ -88,6 +98,150 @@ def get_dialog_engine():
     return _dialog_engine
 
 
+def get_current_executor() -> Optional[Any]:
+    return _current_executor
+
+
+def set_current_executor(executor: Optional[Any]) -> None:
+    global _current_executor
+    _current_executor = executor
+
+
+def create_background_task(coro: Any) -> asyncio.Task:
+    return asyncio.create_task(coro)
+
+
+async def _build_therapy_executor() -> Any:
+    from services.therapy_executor import TherapyExecutor
+
+    audio_player = await get_shared_audio_player()
+
+    chair_manager = None
+    initializer = get_device_initializer()
+    chair_controller = initializer.get_chair_controller()
+    if chair_controller is None:
+        try:
+            await initializer.ensure_chair_controller()
+        except Exception as exc:
+            logger.warning(f"Device initialization failed while building therapy executor: {exc}")
+        chair_controller = initializer.get_chair_controller()
+
+    if chair_controller is not None:
+        chair_manager = ChairControllerManager()
+        chair_manager.set_controller(chair_controller)
+
+    return TherapyExecutor(audio_player=audio_player, chair_manager=chair_manager)
+
+
+def _coarse_intensity_to_runtime_level(intensity: TherapyIntensity) -> int:
+    mapping = {
+        TherapyIntensity.LOW: RUNTIME_INTENSITY_MIN,
+        TherapyIntensity.MEDIUM: 3,
+        TherapyIntensity.HIGH: RUNTIME_INTENSITY_MAX,
+    }
+    return mapping[intensity]
+
+
+def _runtime_level_to_coarse_intensity(level: int) -> TherapyIntensity:
+    if level <= 2:
+        return TherapyIntensity.LOW
+    if level == 3:
+        return TherapyIntensity.MEDIUM
+    return TherapyIntensity.HIGH
+
+
+def _get_runtime_intensity_level(plan: Any) -> int:
+    level = getattr(plan, "runtime_intensity_level", None)
+    if isinstance(level, int):
+        normalized_level = max(RUNTIME_INTENSITY_MIN, min(RUNTIME_INTENSITY_MAX, level))
+        setattr(plan, "runtime_intensity_level", normalized_level)
+        return normalized_level
+
+    intensity = getattr(plan, "intensity", TherapyIntensity.MEDIUM)
+    if not isinstance(intensity, TherapyIntensity):
+        try:
+            intensity = TherapyIntensity(intensity)
+        except Exception:
+            intensity = TherapyIntensity.MEDIUM
+
+    setattr(plan, "intensity", intensity)
+    fallback_level = _coarse_intensity_to_runtime_level(intensity)
+    setattr(plan, "runtime_intensity_level", fallback_level)
+    return fallback_level
+
+
+def _get_adjustment_target_runtime_level(
+    current_level: int,
+    direction: str,
+) -> tuple[int, bool]:
+    if direction == "relax":
+        target_level = max(RUNTIME_INTENSITY_MIN, current_level - 1)
+    elif direction == "intensify":
+        target_level = min(RUNTIME_INTENSITY_MAX, current_level + 1)
+    else:
+        raise HTTPException(status_code=400, detail=f"Invalid adjustment direction: {direction}")
+
+    return target_level, target_level == current_level
+
+
+def _get_pending_stop_task(session_id: str) -> Optional[asyncio.Task]:
+    task = _stop_finalize_tasks.get(session_id)
+    if task is not None and task.done():
+        _stop_finalize_tasks.pop(session_id, None)
+        task = None
+    return task
+
+
+async def _finalize_stopped_session(session_id: str) -> None:
+    from services.session_manager import session_manager
+
+    try:
+        executor = get_current_executor()
+        if executor is not None:
+            try:
+                await executor.stop()
+            finally:
+                set_current_executor(None)
+
+        active_session = session_manager.current_session
+        if (
+            active_session is not None
+            and session_manager.has_active_session
+            and active_session.id == session_id
+        ):
+            await session_manager.end_session()
+    except Exception as exc:
+        logger.error(f"Fast stop finalization failed for session {session_id}: {exc}")
+    finally:
+        _stop_finalize_tasks.pop(session_id, None)
+        _stopping_session_ids.discard(session_id)
+
+
+def _get_adjustment_target_intensity(
+    current_intensity: TherapyIntensity,
+    direction: str,
+) -> tuple[TherapyIntensity, bool]:
+    intensity_order = [
+        TherapyIntensity.LOW,
+        TherapyIntensity.MEDIUM,
+        TherapyIntensity.HIGH,
+    ]
+
+    try:
+        current_index = intensity_order.index(current_intensity)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Invalid current plan intensity") from exc
+
+    if direction == "relax":
+        target_index = max(0, current_index - 1)
+    elif direction == "intensify":
+        target_index = min(len(intensity_order) - 1, current_index + 1)
+    else:
+        raise HTTPException(status_code=400, detail=f"Invalid adjustment direction: {direction}")
+
+    return intensity_order[target_index], target_index == current_index
+
+
 # Request/Response Models
 class EmotionStateRequest(BaseModel):
     """情绪状态请求"""
@@ -109,6 +263,10 @@ class MatchPlanRequest(BaseModel):
 class SelectPlanRequest(BaseModel):
     """方案选择请求"""
     plan_id: str
+
+
+class AdjustIntensityRequest(BaseModel):
+    direction: str = Field(..., description="Adjust direction: relax or intensify")
 
 
 class PlanResponse(BaseModel):
@@ -187,7 +345,7 @@ async def list_plans():
     """获取疗愈方案列表"""
     manager = get_plan_manager()
     plans = manager.get_all_plans()
-    
+
     return {
         "plans": [
             {
@@ -211,11 +369,11 @@ async def get_plan(plan_id: str):
     """获取指定方案详情"""
     manager = get_plan_manager()
     plan = manager.get_plan_by_id(plan_id)
-    
+
     if not plan:
         raise HTTPException(status_code=404, detail=f"Plan not found: {plan_id}")
-    
-    return {
+
+    payload = {
         "id": plan.id,
         "name": plan.name,
         "description": plan.description,
@@ -244,13 +402,25 @@ async def get_plan(plan_id: str):
             for phase in plan.phases
         ]
     }
+    if plan.screen_prompts is not None:
+        payload["screen_prompts"] = [
+            {
+                "start_second": prompt.start_second,
+                "end_second": prompt.end_second,
+                "title": prompt.title,
+                "lines": list(prompt.lines),
+            }
+            for prompt in plan.screen_prompts
+        ]
+
+    return payload
 
 
 @router.post("/match")
 async def match_plan(request: MatchPlanRequest):
     """匹配疗愈方案"""
     manager = get_plan_manager()
-    
+
     # 构建情绪状态
     try:
         emotion_category = EmotionCategory(request.emotion.category)
@@ -259,7 +429,7 @@ async def match_plan(request: MatchPlanRequest):
             status_code=400,
             detail=f"Invalid emotion category: {request.emotion.category}"
         )
-    
+
     emotion = EmotionState(
         category=emotion_category,
         intensity=request.emotion.intensity,
@@ -268,7 +438,7 @@ async def match_plan(request: MatchPlanRequest):
         confidence=request.emotion.confidence,
         timestamp=datetime.now()
     )
-    
+
     # 构建用户偏好
     preferences = None
     if request.preferred_style or request.preferred_intensity:
@@ -276,7 +446,7 @@ async def match_plan(request: MatchPlanRequest):
             preferred_style=TherapyStyle(request.preferred_style) if request.preferred_style else None,
             preferred_intensity=TherapyIntensity(request.preferred_intensity) if request.preferred_intensity else None
         )
-    
+
     # 解析风格参数
     style = None
     if request.style:
@@ -287,10 +457,10 @@ async def match_plan(request: MatchPlanRequest):
                 status_code=400,
                 detail=f"Invalid style: {request.style}"
             )
-    
+
     # 获取匹配结果
     matches = manager.match_with_details(emotion, style, preferences, top_n=3)
-    
+
     return {
         "matched_plans": [
             {
@@ -316,13 +486,13 @@ async def select_plan(request: SelectPlanRequest):
     """用户手动选择方案"""
     selector = get_plan_selector()
     plan = selector.select_plan(request.plan_id)
-    
+
     if not plan:
         raise HTTPException(
             status_code=404,
             detail=f"Plan not found: {request.plan_id}"
         )
-    
+
     return {
         "success": True,
         "selected_plan": {
@@ -339,7 +509,7 @@ async def clear_selection():
     """清除用户选择"""
     selector = get_plan_selector()
     selector.clear_selection()
-    
+
     return {
         "success": True,
         "message": "Selection cleared. Auto-matching will be used."
@@ -357,12 +527,12 @@ async def get_selection_info():
 async def get_effective_plan(request: MatchPlanRequest):
     """
     获取有效方案（考虑用户选择优先级）
-    
+
     如果用户已手动选择方案，返回用户选择的方案
     否则返回自动匹配的方案
     """
     selector = get_plan_selector()
-    
+
     # 构建情绪状态
     try:
         emotion_category = EmotionCategory(request.emotion.category)
@@ -371,7 +541,7 @@ async def get_effective_plan(request: MatchPlanRequest):
             status_code=400,
             detail=f"Invalid emotion category: {request.emotion.category}"
         )
-    
+
     emotion = EmotionState(
         category=emotion_category,
         intensity=request.emotion.intensity,
@@ -380,7 +550,7 @@ async def get_effective_plan(request: MatchPlanRequest):
         confidence=request.emotion.confidence,
         timestamp=datetime.now()
     )
-    
+
     # 构建用户偏好
     preferences = None
     if request.preferred_style or request.preferred_intensity:
@@ -388,7 +558,7 @@ async def get_effective_plan(request: MatchPlanRequest):
             preferred_style=TherapyStyle(request.preferred_style) if request.preferred_style else None,
             preferred_intensity=TherapyIntensity(request.preferred_intensity) if request.preferred_intensity else None
         )
-    
+
     # 解析风格参数
     style = None
     if request.style:
@@ -396,11 +566,11 @@ async def get_effective_plan(request: MatchPlanRequest):
             style = TherapyStyle(request.style)
         except ValueError:
             pass
-    
+
     # 获取有效方案
     plan = selector.get_effective_plan(emotion, style, preferences)
     selection_info = selector.get_selection_info()
-    
+
     return {
         "plan": {
             "id": plan.id,
@@ -432,7 +602,6 @@ async def execute_plan(request: ExecutePlanRequest):
     创建会话、设置情绪状态和方案，然后启动执行器。
     """
     from services.session_manager import session_manager
-    from services.therapy_executor import TherapyExecutor
 
     manager = get_plan_manager()
     plan = manager.get_plan_by_id(request.plan_id)
@@ -463,12 +632,23 @@ async def execute_plan(request: ExecutePlanRequest):
                 )
 
         # 设置方案并开始疗愈
+        plan.runtime_intensity_level = _get_runtime_intensity_level(plan)
         await session_manager.set_plan(plan)
         await session_manager.start_therapy()
 
-        # 启动执行器（后台任务）
-        executor = TherapyExecutor()
-        await executor.start(plan)
+        # 在后台启动执行器，避免首次设备/音频启动阻塞接口响应。
+        executor = await _build_therapy_executor()
+        set_current_executor(executor)
+
+        async def start_executor() -> None:
+            try:
+                await executor.start(plan)
+            except Exception as exc:
+                if get_current_executor() is executor:
+                    set_current_executor(None)
+                logger.error(f"后台启动疗愈执行器失败: {exc}")
+
+        create_background_task(start_executor())
 
         return {
             "success": True,
@@ -510,6 +690,9 @@ async def pause_therapy(session_id: str):
         raise HTTPException(status_code=404, detail=f"会话不匹配: {session_id}")
 
     try:
+        executor = get_current_executor()
+        if executor is not None:
+            await executor.pause()
         await session_manager.pause_session()
         return {"success": True, "session_id": session_id, "message": "疗愈已暂停"}
     except Exception as e:
@@ -528,11 +711,187 @@ async def resume_therapy(session_id: str):
         raise HTTPException(status_code=404, detail=f"会话不匹配: {session_id}")
 
     try:
+        executor = get_current_executor()
+        if executor is not None:
+            await executor.resume()
         await session_manager.resume_session()
         return {"success": True, "session_id": session_id, "message": "疗愈已恢复"}
     except Exception as e:
         logger.error(f"恢复疗愈失败: {e}")
         raise HTTPException(status_code=500, detail=f"恢复疗愈失败: {e}")
+
+
+@router.post("/adjust-intensity/{session_id}")
+async def adjust_therapy_intensity(session_id: str, request: AdjustIntensityRequest):
+    """Adjust therapy intensity while the session is running."""
+    from services.session_manager import session_manager
+
+    if not session_manager.has_active_session:
+        raise HTTPException(status_code=400, detail="No active session")
+    if session_manager.current_session.id != session_id:
+        raise HTTPException(status_code=404, detail=f"Session mismatch: {session_id}")
+
+    executor = get_current_executor()
+    current_plan = getattr(executor, "_current_plan", None) if executor is not None else None
+    if executor is None or current_plan is None:
+        raise HTTPException(status_code=400, detail="No active therapy executor")
+
+    previous_plan_id = current_plan.id
+    previous_intensity = current_plan.intensity.value
+    previous_runtime_intensity_level = _get_runtime_intensity_level(current_plan)
+
+    try:
+        target_runtime_intensity_level, at_boundary = _get_adjustment_target_runtime_level(
+            previous_runtime_intensity_level,
+            request.direction,
+        )
+        target_intensity = _runtime_level_to_coarse_intensity(
+            target_runtime_intensity_level
+        )
+
+        if at_boundary:
+            return {
+                "success": True,
+                "changed": False,
+                "atBoundary": True,
+                "targetIntensity": target_intensity.value,
+                "plan": current_plan.to_dict(),
+                "message": "Already at intensity boundary",
+            }
+
+        changed = await executor.adjust_chair_intensity(target_runtime_intensity_level)
+        if not changed:
+            return {
+                "success": True,
+                "changed": False,
+                "atBoundary": False,
+                "targetIntensity": target_intensity.value,
+                "plan": current_plan.to_dict(),
+                "message": "Unable to adjust chair intensity",
+            }
+
+        await session_manager.set_plan(current_plan)
+        await session_manager.record_adjustment(
+            reason="runtime_intensity_adjustment",
+            adjustment_type="intensity_adjustment",
+            details={
+                "direction": request.direction,
+                "target_intensity": target_intensity.value,
+                "old_plan_id": previous_plan_id,
+                "new_plan_id": current_plan.id,
+                "old_runtime_intensity_level": previous_runtime_intensity_level,
+                "new_runtime_intensity_level": current_plan.runtime_intensity_level,
+            },
+            previous_state={
+                "plan_id": previous_plan_id,
+                "intensity": previous_intensity,
+                "runtime_intensity_level": previous_runtime_intensity_level,
+            },
+            new_state={
+                "plan_id": current_plan.id,
+                "intensity": current_plan.intensity.value,
+                "runtime_intensity_level": current_plan.runtime_intensity_level,
+            },
+        )
+        return {
+            "success": True,
+            "changed": True,
+            "atBoundary": False,
+            "targetIntensity": current_plan.intensity.value,
+            "plan": current_plan.to_dict(),
+            "message": "Therapy intensity adjusted",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Adjust therapy intensity failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Adjust therapy intensity failed: {e}")
+
+
+@router.post("/skip/{session_id}")
+async def skip_therapy_phase(session_id: str):
+    """Skip the current therapy phase."""
+    from services.session_manager import session_manager
+
+    if not session_manager.has_active_session:
+        raise HTTPException(status_code=400, detail="No active session")
+    if session_manager.current_session.id != session_id:
+        raise HTTPException(status_code=404, detail=f"Session mismatch: {session_id}")
+
+    executor = get_current_executor()
+    if executor is None:
+        raise HTTPException(status_code=400, detail="No active therapy executor")
+
+    try:
+        await executor.skip_phase()
+        return {"success": True, "session_id": session_id, "message": "Current phase skipped"}
+    except Exception as e:
+        logger.error(f"Skip therapy phase failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Skip therapy phase failed: {e}")
+
+
+@router.post("/stop-now/{session_id}")
+async def stop_now_therapy(session_id: str):
+    """Stop device outputs immediately and finish session teardown in background."""
+    from services.session_manager import session_manager
+
+    pending_task = _get_pending_stop_task(session_id)
+    if pending_task is not None:
+        return {
+            "success": True,
+            "session_id": session_id,
+            "already_stopping": True,
+            "warnings": [],
+        }
+
+    if not session_manager.has_active_session:
+        existing_session = None
+        get_session_by_id = getattr(session_manager, "get_session_by_id", None)
+        if callable(get_session_by_id):
+            existing_session = await get_session_by_id(session_id)
+
+        if existing_session is not None:
+            return {
+                "success": True,
+                "session_id": session_id,
+                "already_stopping": True,
+                "warnings": [],
+            }
+
+        raise HTTPException(status_code=400, detail="No active session")
+
+    if session_manager.current_session.id != session_id:
+        raise HTTPException(status_code=404, detail=f"Session mismatch: {session_id}")
+
+    warnings: List[str] = []
+    executor = get_current_executor()
+    if executor is not None and hasattr(executor, "stop_outputs_now"):
+        try:
+            stop_result = await executor.stop_outputs_now()
+            if isinstance(stop_result, list):
+                warnings.extend(stop_result)
+        except Exception as exc:
+            logger.warning(f"Fast stop device output handling failed: {exc}")
+            warnings.append("device_stop_failed")
+
+    if hasattr(session_manager, "mark_stopping"):
+        try:
+            await session_manager.mark_stopping()
+        except Exception as exc:
+            logger.warning(f"Failed to mark session stopping: {exc}")
+            warnings.append("session_mark_stopping_failed")
+
+    _stopping_session_ids.add(session_id)
+    _stop_finalize_tasks[session_id] = create_background_task(
+        _finalize_stopped_session(session_id)
+    )
+
+    return {
+        "success": True,
+        "session_id": session_id,
+        "already_stopping": False,
+        "warnings": warnings,
+    }
 
 
 @router.post("/end/{session_id}")
@@ -546,6 +905,12 @@ async def end_therapy(session_id: str):
         raise HTTPException(status_code=404, detail=f"会话不匹配: {session_id}")
 
     try:
+        executor = get_current_executor()
+        if executor is not None:
+            try:
+                await executor.stop()
+            finally:
+                set_current_executor(None)
         session = await session_manager.end_session()
         return {
             "success": True,
@@ -562,20 +927,20 @@ async def end_therapy(session_id: str):
 async def synthesize_voice(request: VoiceSynthesisRequest):
     """
     语音合成
-    
+
     使用 CosyVoice 3.0 模型将文本转换为语音
     支持情感控制和语速调节
     """
     import base64
-    
+
     synthesizer = get_voice_synthesizer()
-    
+
     # 验证情感类型
     try:
         emotion = VoiceEmotion(request.emotion)
     except ValueError:
         emotion = VoiceEmotion.GENTLE
-    
+
     try:
         # 合成语音
         result = await synthesizer.synthesize_with_emotion(
@@ -584,10 +949,10 @@ async def synthesize_voice(request: VoiceSynthesisRequest):
             speed=request.speed,
             speaker=request.speaker
         )
-        
+
         # 将音频数据编码为 Base64
         audio_base64 = base64.b64encode(result.audio_data).decode('utf-8')
-        
+
         return VoiceSynthesisResponse(
             success=True,
             duration_ms=result.duration_ms,
@@ -597,7 +962,7 @@ async def synthesize_voice(request: VoiceSynthesisRequest):
             speaker=result.speaker,
             audio_base64=audio_base64
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -609,27 +974,27 @@ async def synthesize_voice(request: VoiceSynthesisRequest):
 async def synthesize_voice_stream(request: VoiceSynthesisRequest):
     """
     流式语音合成
-    
+
     返回音频流，适用于实时播放场景
     """
     synthesizer = get_voice_synthesizer()
-    
+
     try:
         emotion = VoiceEmotion(request.emotion)
     except ValueError:
         emotion = VoiceEmotion.GENTLE
-    
+
     config = VoiceSynthesisConfig(
         speaker=request.speaker or VoiceSpeaker.CHINESE_FEMALE.value,
         emotion=emotion,
         speed=request.speed,
         stream=True
     )
-    
+
     async def audio_generator():
         async for chunk in synthesizer.synthesize_stream(request.text, config):
             yield chunk
-    
+
     return StreamingResponse(
         audio_generator(),
         media_type="audio/raw",
@@ -645,7 +1010,7 @@ async def get_available_speakers():
     """获取可用的语音角色列表"""
     synthesizer = get_voice_synthesizer()
     speakers = synthesizer.get_available_speakers()
-    
+
     return {
         "speakers": speakers,
         "default": VoiceSpeaker.CHINESE_FEMALE.value,
@@ -669,14 +1034,14 @@ async def get_available_emotions():
 async def synthesize_voice_emotion_based(request: EmotionBasedSynthesisRequest):
     """
     基于用户情绪状态的语音合成
-    
+
     根据用户当前的情绪状态（类别、强度、效价、唤醒度）
     动态调整语音的情感和语速，提供最适合当前情绪的语音输出
     """
     import base64
-    
+
     therapy_synthesizer = get_therapy_voice_synthesizer()
-    
+
     try:
         # 根据情绪状态合成语音
         result = await therapy_synthesizer.synthesize_for_emotion_state(
@@ -686,10 +1051,10 @@ async def synthesize_voice_emotion_based(request: EmotionBasedSynthesisRequest):
             valence=request.valence,
             arousal=request.arousal
         )
-        
+
         # 将音频数据编码为 Base64
         audio_base64 = base64.b64encode(result.audio_data).decode('utf-8')
-        
+
         return VoiceSynthesisResponse(
             success=True,
             duration_ms=result.duration_ms,
@@ -699,7 +1064,7 @@ async def synthesize_voice_emotion_based(request: EmotionBasedSynthesisRequest):
             speaker=result.speaker,
             audio_base64=audio_base64
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -718,27 +1083,27 @@ class GuideVoiceRequest(BaseModel):
 async def synthesize_guide_voice(request: GuideVoiceRequest):
     """
     合成引导语语音
-    
+
     专门用于疗愈引导语的合成，使用较慢、温柔的语速
     """
     import base64
-    
+
     therapy_synthesizer = get_therapy_voice_synthesizer()
-    
+
     try:
         voice_emotion = VoiceEmotion(request.emotion)
     except ValueError:
         voice_emotion = VoiceEmotion.GENTLE
-    
+
     try:
         result = await therapy_synthesizer.synthesize_guide_text(
             guide_text=request.text,
             emotion=voice_emotion,
             speed=request.speed
         )
-        
+
         audio_base64 = base64.b64encode(result.audio_data).decode('utf-8')
-        
+
         return {
             "success": True,
             "duration_ms": result.duration_ms,
@@ -748,7 +1113,7 @@ async def synthesize_guide_voice(request: GuideVoiceRequest):
             "speaker": result.speaker,
             "audio_base64": audio_base64
         }
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -760,12 +1125,12 @@ async def synthesize_guide_voice(request: GuideVoiceRequest):
 async def get_emotion_voice_mapping():
     """
     获取情绪到语音参数的映射关系
-    
+
     返回不同情绪类别对应的语音情感和推荐语速
     """
     mappings = []
-    
-    for emotion_category in ["happy", "sad", "angry", "anxious", "tired", 
+
+    for emotion_category in ["happy", "sad", "angry", "anxious", "tired",
                              "fearful", "surprised", "disgusted", "neutral"]:
         params = EmotionVoiceMapper.get_voice_params_for_emotion(
             emotion_category=emotion_category,
@@ -779,7 +1144,7 @@ async def get_emotion_voice_mapping():
             "recommended_speed": params["speed"],
             "speaker": params["speaker"]
         })
-    
+
     return {
         "mappings": mappings,
         "description": "情绪类别到语音参数的映射关系"
@@ -790,18 +1155,18 @@ async def get_emotion_voice_mapping():
 async def chat(request: ChatRequest):
     """
     AI 对话
-    
+
     使用 Qwen3-8B 模型进行温暖、共情、非评判的对话
     支持危机关键词检测和 AI 身份声明
     """
     dialog_engine = get_dialog_engine()
-    
+
     try:
         response = await dialog_engine.chat(
             message=request.message,
             check_crisis=request.check_crisis
         )
-        
+
         return ChatResponse(
             success=True,
             content=response.content,
@@ -811,7 +1176,7 @@ async def chat(request: ChatRequest):
             crisis_resources=response.crisis_resources,
             generation_time_ms=response.generation_time_ms
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -823,12 +1188,12 @@ async def chat(request: ChatRequest):
 async def reset_chat():
     """
     重置对话会话
-    
+
     清除对话历史并重置首次响应标志
     """
     dialog_engine = get_dialog_engine()
     dialog_engine.reset_session()
-    
+
     return {
         "success": True,
         "message": "Chat session reset successfully"
@@ -839,12 +1204,12 @@ async def reset_chat():
 async def get_chat_history():
     """
     获取对话历史
-    
+
     返回当前会话的所有对话消息
     """
     dialog_engine = get_dialog_engine()
     history = dialog_engine.get_history()
-    
+
     return {
         "history": [
             {
@@ -862,7 +1227,7 @@ async def get_chat_history():
 async def get_crisis_keywords():
     """
     获取危机关键词列表
-    
+
     返回系统用于检测危机情况的关键词
     """
     return {
@@ -881,11 +1246,11 @@ class CrisisCheckRequest(BaseModel):
 async def check_crisis(request: CrisisCheckRequest):
     """
     检查消息是否包含危机关键词
-    
+
     仅检测，不进行对话
     """
     is_crisis, matched_keywords = CrisisKeywordDetector.detect_crisis(request.message)
-    
+
     return {
         "is_crisis": is_crisis,
         "matched_keywords": matched_keywords,

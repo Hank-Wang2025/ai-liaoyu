@@ -1,0 +1,260 @@
+# ============================================================
+# 智能疗愈仓硬件配置文件
+# Healing Pod Hardware Configuration
+# ============================================================
+# 
+# 使用说明：
+# 1. 根据实际部署的硬件设备修改此配置文件
+# 2. 未连接的设备将自动使用模拟器（Mock）模式
+# 3. 系统启动时会自动检测并连接配置的设备
+#
+# ============================================================
+
+# 全局设置
+global:
+  # 设备连接超时时间（秒）
+  connection_timeout: 10
+  # 设备重连间隔（秒）
+  reconnect_interval: 30
+  # 启用模拟模式（无硬件时使用）
+  enable_mock_fallback: true
+  # 日志级别: DEBUG, INFO, WARNING, ERROR
+  log_level: INFO
+
+# ============================================================
+# 心率监测设备配置
+# ============================================================
+heart_rate:
+  # 是否启用心率监测
+  enabled: true
+  
+  # 设备类型: ble（蓝牙心率带）, mock（模拟器）
+  type: ble
+  
+  # BLE 设备配置
+  ble:
+    # 设备地址（留空则自动扫描）
+    # 格式: "XX:XX:XX:XX:XX:XX" (macOS/Linux) 或 UUID (Windows)
+    device_address: ""
+    
+    # 设备名称关键词（用于自动扫描匹配）
+    device_name_keywords:
+      - "Polar"
+      - "H10"
+      - "H9"
+      - "HRM"
+      - "Heart"
+      - "Garmin"
+      - "Wahoo"
+      - "CooSpo"
+    
+    # 扫描超时时间（秒）
+    scan_timeout: 10
+    
+    # 数据缓冲区大小（读数数量）
+    buffer_size: 600
+  
+  # 模拟器配置（测试用）
+  mock:
+    base_bpm: 72
+    variability: 8
+
+# ============================================================
+# 灯光设备配置
+# ============================================================
+lights:
+  # 是否启用灯光控制
+  enabled: true
+  
+  # 灯光设备列表（支持多个设备）
+  devices:
+    # 主灯光 - Yeelight 示例
+    - name: main_light
+      type: yeelight
+      enabled: true
+      config:
+        ip: "192.168.1.100"
+    
+    # 氛围灯 - Yeelight 示例
+    # - name: ambient_light
+    #   type: yeelight
+    #   enabled: true
+    #   config:
+    #     ip: "192.168.1.101"
+    
+    # 飞利浦 Hue 示例
+    # - name: hue_light
+    #   type: hue
+    #   enabled: false
+    #   config:
+    #     bridge_ip: "192.168.1.50"
+    #     api_key: "your-hue-api-key"
+    #     light_id: "1"
+    
+    # 小米米家示例
+    # - name: mihome_light
+    #   type: mihome
+    #   enabled: false
+    #   config:
+    #     ip: "192.168.1.102"
+    #     token: "your-32-char-hex-token"
+    
+    # 涂鸦智能灯示例
+    # - name: tuya_light
+    #   type: tuya
+    #   enabled: false
+    #   config:
+    #     device_id: "your-device-id"
+    #     ip: "192.168.1.103"
+    #     local_key: "your-local-key"
+    #     version: "3.3"
+    
+    # DMX512 专业灯光示例
+    # - name: dmx_light
+    #   type: dmx
+    #   enabled: false
+    #   config:
+    #     port: "/dev/ttyUSB0"
+    #     start_channel: 1
+  
+  # 默认灯光参数
+  defaults:
+    brightness: 60
+    transition_ms: 3000
+    # 呼吸灯默认参数
+    breath:
+      min_brightness: 30
+      max_brightness: 80
+      period_ms: 4000
+
+# ============================================================
+# 按摩座椅配置
+# ============================================================
+chair:
+  # 是否启用座椅控制
+  enabled: true
+  
+  # 设备类型: ble（蓝牙座椅）, mock（模拟器）
+  type: mock
+  
+  # BLE 座椅配置
+  ble:
+    # 设备地址（留空则自动扫描）
+    device_address: ""
+    
+    # 设备名称关键词（用于自动扫描匹配）
+    device_name_keywords:
+      - "Chair"
+      - "Massage"
+      - "按摩"
+      - "座椅"
+    
+    # 自定义 BLE 服务 UUID（根据具体设备调整）
+    service_uuid: "0000fff0-0000-1000-8000-00805f9b34fb"
+    control_char_uuid: "0000fff1-0000-1000-8000-00805f9b34fb"
+    
+    # 扫描超时时间（秒）
+    scan_timeout: 10
+  
+  # 默认按摩参数
+  defaults:
+    mode: gentle
+    intensity: 5
+
+# ============================================================
+# 香薰设备配置
+# ============================================================
+scent:
+  # 是否启用香薰控制
+  enabled: true
+  
+  # 设备类型: wifi（WiFi香薰机）, mock（模拟器）
+  type: mock
+  
+  # WiFi 香薰机配置
+  wifi:
+    ip: "192.168.1.110"
+    port: 80
+    api_path: "/api"
+  
+  # 涂鸦香薰机配置（如使用涂鸦平台设备）
+  tuya:
+    device_id: ""
+    ip: ""
+    local_key: ""
+  
+  # 默认香薰参数
+  defaults:
+    scent_type: lavender
+    intensity: 5
+
+# ============================================================
+# 音频设备配置
+# ============================================================
+audio:
+  # 是否启用音频控制
+  enabled: true
+  
+  # 输出设备（留空使用系统默认）
+  output_device: ""
+  
+  # 默认音量 (0-100)
+  default_volume: 50
+  
+  # 淡入淡出时间（毫秒）
+  fade_duration_ms: 2000
+  
+  # 环绕声支持
+  surround_sound: false
+
+# ============================================================
+# 显示设备配置
+# ============================================================
+display:
+  # 是否启用视觉内容显示
+  enabled: true
+  
+  # 显示模式: fullscreen, windowed
+  mode: fullscreen
+  
+  # 分辨率（留空使用系统默认）
+  resolution: ""
+  
+  # 显示器索引（多显示器时使用）
+  monitor_index: 0
+
+# ============================================================
+# 网络配置
+# ============================================================
+network:
+  # 后端 API 地址
+  api_host: "127.0.0.1"
+  api_port: 8000
+  
+  # WebSocket 配置
+  websocket:
+    enabled: true
+    port: 8001
+
+# ============================================================
+# 设备发现配置
+# ============================================================
+discovery:
+  # 启动时自动发现设备
+  auto_discover: true
+  
+  # 发现超时时间（秒）
+  timeout: 15
+  
+  # BLE 扫描配置
+  ble:
+    enabled: true
+    scan_duration: 10
+  
+  # WiFi 设备扫描配置
+  wifi:
+    enabled: true
+    # Yeelight 设备发现
+    yeelight_discovery: true
+    # mDNS 服务发现
+    mdns_discovery: true

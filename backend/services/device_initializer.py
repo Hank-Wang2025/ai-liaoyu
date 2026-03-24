@@ -93,6 +93,21 @@ class DeviceInitializer:
         logger.info(f"设备初始化完成: {success_count}/{total_count} 成功")
         
         return results
+
+    async def ensure_chair_controller(self) -> Optional[Any]:
+        """Ensure the chair controller is initialized."""
+        if self._chair_controller is not None:
+            self._init_results["chair"] = True
+            return self._chair_controller
+
+        try:
+            initialized = await self._init_chair()
+        except Exception as e:
+            logger.error(f"Chair-only initialization failed: {e}")
+            initialized = False
+
+        self._init_results["chair"] = initialized
+        return self._chair_controller if initialized else None
     
     async def _init_heart_rate(self) -> bool:
         """初始化心率设备"""

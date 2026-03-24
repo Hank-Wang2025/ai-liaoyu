@@ -1,0 +1,89 @@
+# 焦虑缓解方案 - 现代风格（正念冥想）
+id: anxiety_relief_modern
+name: 正念冥想 - 焦虑缓解
+description: 采用现代正念冥想方法，通过身体扫描和呼吸觉察帮助缓解焦虑情绪
+target_emotions:
+  - anxious
+  - fearful
+intensity: medium
+style: modern
+duration: 900  # 15分钟
+
+phases:
+  - name: 着陆阶段
+    duration: 180  # 3分钟
+    light:
+      color: "#4169E1"  # 皇家蓝
+      brightness: 35
+      transition: 5000
+      pattern: static
+    audio:
+      file: content/audio/ambient_calm.mp3
+      volume: 55
+      loop: true
+      fade_in: 3000
+      fade_out: 2000
+    visual:
+      file: content/visual/ocean_waves.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 欢迎来到这个安全的空间。请找一个舒适的姿势，让身体完全放松。现在，让我们把注意力带回到当下这一刻...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.95
+    chair:
+      mode: gentle
+      intensity: 3
+
+  - name: 身体扫描阶段
+    duration: 360  # 6分钟
+    light:
+      color: "#6495ED"  # 矢车菊蓝
+      brightness: 45
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/meditation_bells.mp3
+      volume: 45
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/northern_lights.mp4
+      loop: true
+      brightness: 65
+    voice_guide:
+      text: 现在，让我们开始身体扫描。把注意力带到头顶...感受那里的任何感觉...慢慢向下移动到额头...眉毛...眼睛...让每一个部位都完全放松...
+      voice: 中文女
+      emotion: calm
+      speed: 0.9
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 呼吸觉察阶段
+    duration: 360  # 6分钟
+    light:
+      color: "#87CEEB"  # 天蓝色
+      brightness: 55
+      transition: 3000
+      pattern: breath
+    audio:
+      file: content/audio/soft_piano.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/clouds_sky.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 现在把注意力带到呼吸上。不需要改变呼吸，只是观察它。感受空气进入鼻腔...胸腔的起伏...腹部的扩张与收缩...每一次呼吸都在告诉你：此刻，你是安全的...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 3

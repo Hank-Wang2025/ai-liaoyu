@@ -1,0 +1,589 @@
+# 音频资源清单
+# Audio Resource Manifest for Healing Pod System
+# 
+# 说明：此文件定义了系统所需的所有音频资源
+# 实际音频文件需要单独准备并放置在 content/audio/ 目录下
+
+version: "1.0"
+last_updated: "2024-01-01"
+
+# ============================================
+# 背景音乐 - Background Music (50+ 首)
+# ============================================
+background_music:
+  # 中式传统音乐 - Chinese Traditional
+  chinese_traditional:
+    - id: chinese_guqin_calm
+      filename: chinese_guqin_calm.mp3
+      name: 古琴静心曲
+      description: 舒缓的古琴演奏，适合入静和冥想
+      duration: 600
+      mood: calm
+      style: chinese
+      
+    - id: chinese_pipa
+      filename: chinese_pipa.mp3
+      name: 琵琶轻音
+      description: 温柔的琵琶演奏，适合情绪舒缓
+      duration: 480
+      mood: warm
+      style: chinese
+      
+    - id: chinese_flute
+      filename: chinese_flute.mp3
+      name: 竹笛悠扬
+      description: 悠扬的竹笛曲，适合养神阶段
+      duration: 540
+      mood: peaceful
+      style: chinese
+      
+    - id: chinese_xiao
+      filename: chinese_xiao.mp3
+      name: 洞箫幽韵
+      description: 深沉的洞箫演奏，适合安神定志
+      duration: 600
+      mood: deep
+      style: chinese
+      
+    - id: chinese_guzheng
+      filename: chinese_guzheng.mp3
+      name: 古筝流水
+      description: 流畅的古筝演奏，适合情绪平衡
+      duration: 540
+      mood: flowing
+      style: chinese
+      
+    - id: chinese_zither
+      filename: chinese_zither.mp3
+      name: 瑶琴清音
+      description: 清澈的古琴演奏，适合夜间放松
+      duration: 600
+      mood: serene
+      style: chinese
+      
+    - id: uplifting_chinese
+      filename: uplifting_chinese.mp3
+      name: 希望之光
+      description: 积极向上的中式音乐，适合重拾希望
+      duration: 480
+      mood: uplifting
+      style: chinese
+      
+    - id: five_elements
+      filename: five_elements.mp3
+      name: 五行调和
+      description: 基于五行理念的音乐，适合阴阳调和
+      duration: 600
+      mood: balanced
+      style: chinese
+      
+    - id: tibetan_bowl
+      filename: tibetan_bowl.mp3
+      name: 颂钵疗愈
+      description: 西藏颂钵音疗，适合深度放松
+      duration: 720
+      mood: meditative
+      style: chinese
+      
+    - id: harmony_bells
+      filename: harmony_bells.mp3
+      name: 和谐钟声
+      description: 和谐的钟声，适合冥想结束
+      duration: 300
+      mood: harmonious
+      style: chinese
+
+  # 现代轻音乐 - Modern Ambient
+  modern_ambient:
+    - id: ambient_calm
+      filename: ambient_calm.mp3
+      name: 宁静氛围
+      description: 现代氛围音乐，适合正念冥想
+      duration: 600
+      mood: calm
+      style: modern
+      
+    - id: soft_piano
+      filename: soft_piano.mp3
+      name: 轻柔钢琴
+      description: 轻柔的钢琴曲，适合呼吸觉察
+      duration: 540
+      mood: gentle
+      style: modern
+      
+    - id: meditation_bells
+      filename: meditation_bells.mp3
+      name: 冥想铃声
+      description: 冥想用铃声，适合身体扫描
+      duration: 480
+      mood: meditative
+      style: modern
+      
+    - id: deep_relaxation
+      filename: deep_relaxation.mp3
+      name: 深度放松
+      description: 深度放松音乐，适合高压力缓解
+      duration: 600
+      mood: relaxing
+      style: modern
+      
+    - id: theta_waves
+      filename: theta_waves.mp3
+      name: θ波音乐
+      description: θ脑波音乐，促进深度放松
+      duration: 720
+      mood: deep
+      style: modern
+      
+    - id: gentle_acoustic
+      filename: gentle_acoustic.mp3
+      name: 温柔原声
+      description: 温柔的原声吉他，适合情绪低落
+      duration: 540
+      mood: warm
+      style: modern
+      
+    - id: hopeful_piano
+      filename: hopeful_piano.mp3
+      name: 希望钢琴
+      description: 充满希望的钢琴曲，适合感恩练习
+      duration: 480
+      mood: hopeful
+      style: modern
+      
+    - id: uplifting_orchestra
+      filename: uplifting_orchestra.mp3
+      name: 振奋交响
+      description: 振奋人心的管弦乐，适合希望重燃
+      duration: 540
+      mood: uplifting
+      style: modern
+      
+    - id: uplifting_ambient
+      filename: uplifting_ambient.mp3
+      name: 活力氛围
+      description: 充满活力的氛围音乐，适合能量激活
+      duration: 420
+      mood: energizing
+      style: modern
+      
+    - id: positive_energy
+      filename: positive_energy.mp3
+      name: 正能量
+      description: 积极正向的音乐，适合活力焕发
+      duration: 360
+      mood: positive
+      style: modern
+      
+    - id: peaceful_strings
+      filename: peaceful_strings.mp3
+      name: 平静弦乐
+      description: 平静的弦乐演奏，适合愤怒缓解后
+      duration: 540
+      mood: peaceful
+      style: modern
+      
+    - id: deep_bass_calm
+      filename: deep_bass_calm.mp3
+      name: 深沉低音
+      description: 深沉的低音音乐，适合情绪觉察
+      duration: 480
+      mood: grounding
+      style: modern
+      
+    - id: rhythmic_drums
+      filename: rhythmic_drums.mp3
+      name: 节奏鼓点
+      description: 有节奏的鼓点，适合能量释放
+      duration: 540
+      mood: rhythmic
+      style: modern
+      
+    - id: gentle_harp
+      filename: gentle_harp.mp3
+      name: 温柔竖琴
+      description: 温柔的竖琴演奏，适合自我关怀
+      duration: 540
+      mood: tender
+      style: modern
+      
+    - id: loving_kindness
+      filename: loving_kindness.mp3
+      name: 慈心音乐
+      description: 慈心冥想配乐，适合自我接纳
+      duration: 600
+      mood: loving
+      style: modern
+      
+    - id: acceptance_melody
+      filename: acceptance_melody.mp3
+      name: 接纳旋律
+      description: 接纳主题音乐，适合释放阶段
+      duration: 480
+      mood: accepting
+      style: modern
+
+  # 睡眠音乐 - Sleep Music
+  sleep_music:
+    - id: delta_waves
+      filename: delta_waves.mp3
+      name: δ波音乐
+      description: δ脑波音乐，促进深度睡眠
+      duration: 900
+      mood: sleepy
+      style: modern
+      
+    - id: sleep_ambient
+      filename: sleep_ambient.mp3
+      name: 睡眠氛围
+      description: 睡眠专用氛围音乐
+      duration: 1200
+      mood: drowsy
+      style: modern
+
+  # 专注音乐 - Focus Music
+  focus_music:
+    - id: focus_binaural
+      filename: focus_binaural.mp3
+      name: 双耳节拍
+      description: 双耳节拍音乐，提升专注力
+      duration: 600
+      mood: focused
+      style: modern
+      
+    - id: alpha_waves
+      filename: alpha_waves.mp3
+      name: α波音乐
+      description: α脑波音乐，促进清醒放松
+      duration: 540
+      mood: alert
+      style: modern
+      
+    - id: clarity_tones
+      filename: clarity_tones.mp3
+      name: 清晰音调
+      description: 清晰的音调，适合准备就绪
+      duration: 360
+      mood: clear
+      style: modern
+
+  # 快速放松 - Quick Calm
+  quick_calm:
+    - id: instant_calm
+      filename: instant_calm.mp3
+      name: 即刻平静
+      description: 快速平静音乐，适合紧急放松
+      duration: 300
+      mood: calming
+      style: modern
+      
+    - id: heartbeat_slow
+      filename: heartbeat_slow.mp3
+      name: 缓慢心跳
+      description: 模拟缓慢心跳，帮助平静
+      duration: 240
+      mood: grounding
+      style: modern
+      
+    - id: peaceful_end
+      filename: peaceful_end.mp3
+      name: 平静结束
+      description: 平静的结束音乐
+      duration: 180
+      mood: peaceful
+      style: modern
+
+# ============================================
+# 自然音效 - Nature Sounds
+# ============================================
+nature_sounds:
+  water:
+    - id: nature_stream
+      filename: nature_stream.mp3
+      name: 溪流潺潺
+      description: 山间溪流声，适合调息阶段
+      duration: 600
+      environment: forest
+      
+    - id: ocean_waves
+      filename: ocean_waves.mp3
+      name: 海浪声
+      description: 轻柔的海浪声，适合着陆阶段
+      duration: 720
+      environment: beach
+      
+    - id: nature_rain
+      filename: nature_rain.mp3
+      name: 雨声
+      description: 轻柔的雨声，适合深度休息
+      duration: 900
+      environment: indoor
+      
+    - id: waterfall
+      filename: waterfall.mp3
+      name: 瀑布声
+      description: 远处瀑布声，适合渐进放松
+      duration: 600
+      environment: mountain
+
+  birds:
+    - id: nature_birds
+      filename: nature_birds.mp3
+      name: 鸟鸣声
+      description: 清晨鸟鸣，适合舒展身心
+      duration: 540
+      environment: garden
+      
+    - id: morning_birds
+      filename: morning_birds.mp3
+      name: 晨鸟啼鸣
+      description: 清晨鸟叫声，适合轻柔唤醒
+      duration: 420
+      environment: meadow
+      
+    - id: birds_stream
+      filename: birds_stream.mp3
+      name: 鸟鸣溪流
+      description: 鸟鸣与溪流混合，适合森林漫步
+      duration: 720
+      environment: forest
+
+  forest:
+    - id: forest_ambience
+      filename: forest_ambience.mp3
+      name: 森林氛围
+      description: 森林环境音，适合自然沉浸
+      duration: 900
+      environment: forest
+      
+    - id: wind_leaves
+      filename: wind_leaves.mp3
+      name: 风吹树叶
+      description: 风吹树叶声，适合树下冥想
+      duration: 600
+      environment: forest
+      
+    - id: nature_farewell
+      filename: nature_farewell.mp3
+      name: 自然告别
+      description: 森林告别音效，适合结束阶段
+      duration: 300
+      environment: forest
+
+  night:
+    - id: night_crickets
+      filename: night_crickets.mp3
+      name: 夜间虫鸣
+      description: 夜间蟋蟀声，适合睡前放松
+      duration: 900
+      environment: garden
+
+# ============================================
+# 引导语模板 - Voice Guide Templates (20+ 套)
+# ============================================
+voice_guides:
+  # 开场引导 - Opening Guides
+  opening:
+    - id: welcome_calm
+      name: 平静欢迎
+      text: 欢迎来到这个安全的空间。请找一个舒适的姿势，让身体完全放松。现在，让我们把注意力带回到当下这一刻...
+      emotion: gentle
+      speed: 0.95
+      duration: 30
+      
+    - id: welcome_warm
+      name: 温暖欢迎
+      text: 亲爱的朋友，感谢你来到这里。无论你现在感受如何，都是被接纳的。让我们一起，慢慢地，找回内心的温暖...
+      emotion: warm
+      speed: 0.9
+      duration: 35
+      
+    - id: welcome_chinese
+      name: 中式欢迎
+      text: 请您找一个舒适的姿势坐好，轻轻闭上眼睛。让我们一起开始这段宁静的旅程。深深地吸一口气，感受空气缓缓进入身体...
+      emotion: calm
+      speed: 0.9
+      duration: 40
+      
+    - id: welcome_safe
+      name: 安全欢迎
+      text: 停下来。深呼吸。你是安全的。让我们用接下来的时间，找回内心的平静。跟着我的声音，深深吸气...慢慢呼出...
+      emotion: calm
+      speed: 0.9
+      duration: 30
+
+  # 呼吸引导 - Breathing Guides
+  breathing:
+    - id: breath_basic
+      name: 基础呼吸
+      text: 现在把注意力带到呼吸上。不需要改变呼吸，只是观察它。感受空气进入鼻腔...胸腔的起伏...腹部的扩张与收缩...
+      emotion: calm
+      speed: 0.9
+      duration: 45
+      
+    - id: breath_478
+      name: 4-7-8呼吸
+      text: 4-7-8呼吸法。吸气4秒...1...2...3...4...屏住7秒...1...2...3...4...5...6...7...呼气8秒...1...2...3...4...5...6...7...8...
+      emotion: calm
+      speed: 0.85
+      duration: 60
+      
+    - id: breath_chinese
+      name: 中式调息
+      text: 现在，让我们开始调息。吸气...二...三...四...屏住...二...三...呼气...二...三...四...五...六...感受每一次呼吸带来的平静...
+      emotion: gentle
+      speed: 0.85
+      duration: 50
+      
+    - id: breath_release
+      name: 释放呼吸
+      text: 深深吸气...感受胸腔的扩张...然后用力呼出...想象所有的紧张和压力随着呼气离开身体...
+      emotion: calm
+      speed: 0.85
+      duration: 40
+
+  # 身体扫描 - Body Scan Guides
+  body_scan:
+    - id: scan_head_down
+      name: 从头到脚
+      text: 现在，让我们开始身体扫描。把注意力带到头顶...感受那里的任何感觉...慢慢向下移动到额头...眉毛...眼睛...让每一个部位都完全放松...
+      emotion: calm
+      speed: 0.9
+      duration: 60
+      
+    - id: scan_progressive
+      name: 渐进放松
+      text: 从头顶开始，让每一块肌肉都完全放松...额头放松...眼睛放松...脸颊放松...下巴放松...让放松的感觉慢慢流向全身...
+      emotion: calm
+      speed: 0.75
+      duration: 70
+      
+    - id: scan_tension_release
+      name: 紧张释放
+      text: 首先，紧紧握住双拳，感受手臂的紧张...保持...然后，完全放松...感受紧张消散的感觉...
+      emotion: calm
+      speed: 0.85
+      duration: 50
+
+  # 想象引导 - Visualization Guides
+  visualization:
+    - id: viz_sunlight
+      name: 阳光想象
+      text: 想象温暖的阳光洒在身上，感受它的温度。每一缕阳光都在告诉你：生命中总有美好的事物在等待着你...
+      emotion: warm
+      speed: 0.9
+      duration: 40
+      
+    - id: viz_forest
+      name: 森林想象
+      text: 想象你正走进一片宁静的森林。阳光透过树叶洒下斑驳的光影。深呼吸，感受清新的空气充满肺部...
+      emotion: gentle
+      speed: 0.9
+      duration: 45
+      
+    - id: viz_garden
+      name: 庭院想象
+      text: 想象自己置身于一座宁静的庭院中。四周是古老的树木，微风轻拂。这里没有任何威胁，只有平和与安宁...
+      emotion: gentle
+      speed: 0.85
+      duration: 45
+      
+    - id: viz_energy
+      name: 能量想象
+      text: 想象金色的能量从头顶流入，流经全身每一个细胞，带来温暖和活力。你的身体正在充满能量...
+      emotion: encouraging
+      speed: 1.0
+      duration: 40
+      
+    - id: viz_lake
+      name: 湖面想象
+      text: 感受内心的湖面逐渐变得平静，倒映着蓝天白云。任何波澜都会慢慢平息，留下一片宁静...
+      emotion: calm
+      speed: 0.9
+      duration: 35
+
+  # 自我关怀 - Self-Compassion Guides
+  self_compassion:
+    - id: sc_loving_kindness
+      name: 慈心祝福
+      text: 把一只手放在心口。感受心跳的温暖。对自己说：愿我平安，愿我健康，愿我快乐，愿我自在。重复这些祝福，让它们渗透到内心深处...
+      emotion: warm
+      speed: 0.85
+      duration: 55
+      
+    - id: sc_acceptance
+      name: 自我接纳
+      text: 你已经足够好了。不需要完美，不需要证明什么。你的存在本身就是有价值的。带着这份自我接纳，继续前行...
+      emotion: encouraging
+      speed: 0.9
+      duration: 40
+      
+    - id: sc_strength
+      name: 内在力量
+      text: 你比你想象的更加坚强。每一次低谷都是成长的机会。相信自己，美好的事物正在向你走来...
+      emotion: encouraging
+      speed: 0.95
+      duration: 35
+
+  # 结束引导 - Closing Guides
+  closing:
+    - id: close_gentle
+      name: 温柔结束
+      text: 很好，你做得非常好。现在让身心慢慢平静下来。带着这份平静，继续你的一天。
+      emotion: warm
+      speed: 0.95
+      duration: 25
+      
+    - id: close_encouraging
+      name: 鼓励结束
+      text: 很好！感受身体中流动的能量。你已经准备好迎接新的挑战。带着这份活力，开始新的旅程吧！
+      emotion: encouraging
+      speed: 1.0
+      duration: 30
+      
+    - id: close_peaceful
+      name: 平和结束
+      text: 感受内心的和谐与平衡。你的身心现在处于最佳状态。带着这份平和，你可以从容面对生活中的一切...
+      emotion: warm
+      speed: 0.9
+      duration: 35
+      
+    - id: close_sleep
+      name: 睡眠结束
+      text: 现在，让意识慢慢沉入宁静的深处...你是安全的...你是被爱的...让睡眠温柔地拥抱你...
+      emotion: gentle
+      speed: 0.7
+      duration: 30
+      
+    - id: close_nature
+      name: 自然结束
+      text: 是时候离开了。但这份宁静会一直陪伴着你。无论何时需要，你都可以在心中回到这里。带着这份平静，回到现实世界吧。
+      emotion: encouraging
+      speed: 0.95
+      duration: 35
+
+# ============================================
+# 音频规格要求 - Audio Specifications
+# ============================================
+specifications:
+  format: mp3
+  sample_rate: 44100
+  bit_rate: 320kbps
+  channels: stereo
+  normalization: -14 LUFS
+  
+  requirements:
+    - 所有音频文件必须无版权问题或已获得授权
+    - 背景音乐应无人声或仅有轻柔和声
+    - 自然音效应为高质量实地录音
+    - 所有音频应经过降噪处理
+    - 循环播放的音频应有平滑的循环点
+
+# ============================================
+# 统计信息 - Statistics
+# ============================================
+statistics:
+  total_background_music: 52
+  total_nature_sounds: 11
+  total_voice_guides: 24
+  total_audio_files: 87

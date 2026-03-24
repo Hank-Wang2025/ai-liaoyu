@@ -1,0 +1,71 @@
+﻿<h2>手动情绪选择页布局</h2>
+<p class="subtitle">场景：麦克风不可用或被拒绝后，用户进入手动选择。请选择更适合按摩椅终端的布局。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">方案 A - 独立手动步骤（推荐）</div>
+        <div class="mockup-body" style="padding:16px;background:#141b34;color:#fff;min-height:420px;">
+          <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-size:28px;font-weight:700;margin-bottom:8px;">选择你现在的感受</div>
+            <div style="font-size:14px;color:#9fb0d4;">麦克风不可用，已切换为手动选择</div>
+          </div>
+          <div style="background:#1e2a4a;border:1px solid #35528a;border-radius:14px;padding:12px 14px;margin-bottom:18px;color:#c9d7f5;font-size:13px;">提示：只需选一个最接近当前状态的情绪，系统会继续推荐疗愈方案</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+            <div style="padding:14px;border-radius:14px;background:#26355f;text-align:center;">开心</div>
+            <div style="padding:14px;border-radius:14px;background:#44c9d8;color:#0d1831;text-align:center;font-weight:700;">平静</div>
+            <div style="padding:14px;border-radius:14px;background:#26355f;text-align:center;">焦虑</div>
+            <div style="padding:14px;border-radius:14px;background:#26355f;text-align:center;">生气</div>
+            <div style="padding:14px;border-radius:14px;background:#26355f;text-align:center;">难过</div>
+            <div style="padding:14px;border-radius:14px;background:#26355f;text-align:center;">疲惫</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="color:#9fb0d4;font-size:13px;">未选择时，继续按钮禁用</div>
+            <div>
+              <button class="mock-button" style="background:#243358;color:#a6b6d4;">返回</button>
+              <button class="mock-button" style="margin-left:8px;background:#44c9d8;color:#0d1831;">继续</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>独立手动步骤</h3>
+      <p>页面状态清楚，适合大屏触控，也最符合现在的步骤流。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">方案 B - 录音页内联替换</div>
+        <div class="mockup-body" style="padding:16px;background:#141b34;color:#fff;min-height:420px;">
+          <div style="text-align:center;margin-bottom:10px;">
+            <div style="font-size:28px;font-weight:700;margin-bottom:8px;">情绪评估</div>
+            <div style="font-size:14px;color:#9fb0d4;">麦克风不可用，请改用手动方式</div>
+          </div>
+          <div style="width:110px;height:110px;border-radius:999px;background:#2a3658;margin:10px auto 18px;display:flex;align-items:center;justify-content:center;color:#a6b6d4;">麦克风</div>
+          <div style="background:#1e2a4a;border-radius:14px;padding:14px;margin-bottom:16px;">
+            <div style="font-size:13px;color:#c9d7f5;margin-bottom:12px;">请选择当前情绪</div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+              <div style="padding:12px;border-radius:12px;background:#44c9d8;color:#0d1831;text-align:center;font-weight:700;">开心</div>
+              <div style="padding:12px;border-radius:12px;background:#26355f;text-align:center;">平静</div>
+              <div style="padding:12px;border-radius:12px;background:#26355f;text-align:center;">焦虑</div>
+              <div style="padding:12px;border-radius:12px;background:#26355f;text-align:center;">生气</div>
+              <div style="padding:12px;border-radius:12px;background:#26355f;text-align:center;">难过</div>
+              <div style="padding:12px;border-radius:12px;background:#26355f;text-align:center;">疲惫</div>
+            </div>
+          </div>
+          <div style="text-align:center;">
+            <button class="mock-button" style="background:#44c9d8;color:#0d1831;">继续推荐</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>录音页内联替换</h3>
+      <p>改动看起来少，但语音失败态和手动态混在一起，后续更难扩展。</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+# 恐惧安抚方案 - 中式风格
+id: fear_comfort_chinese
+name: 安神定志 - 恐惧安抚
+description: 采用中式传统安神方法，通过温暖的引导和舒缓音乐帮助缓解恐惧情绪
+target_emotions:
+  - fearful
+  - anxious
+intensity: medium
+style: chinese
+duration: 1200  # 20分钟
+
+phases:
+  - name: 安心开启
+    duration: 300  # 5分钟
+    light:
+      color: "#DEB887"  # 实木色
+      brightness: 50
+      transition: 6000
+      pattern: static
+    audio:
+      file: content/audio/chinese_xiao.mp3
+      volume: 50
+      loop: true
+      fade_in: 4000
+      fade_out: 2000
+    visual:
+      file: content/visual/warm_candlelight.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 亲爱的朋友，你现在是安全的。让我们一起，在这温暖的空间里，慢慢地找回内心的安宁。深呼吸，感受这份安全...
+      voice: 中文女
+      emotion: warm
+      speed: 0.85
+    chair:
+      mode: gentle
+      intensity: 3
+    scent:
+      scent_type: sandalwood
+      intensity: 5
+
+  - name: 定神阶段
+    duration: 480  # 8分钟
+    light:
+      color: "#D2B48C"  # 棕褐色
+      brightness: 55
+      transition: 5000
+      pattern: breath
+    audio:
+      file: content/audio/tibetan_bowl.mp3
+      volume: 45
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/temple_garden.mp4
+      loop: true
+      brightness: 65
+    voice_guide:
+      text: 想象自己置身于一座宁静的庭院中。四周是古老的树木，微风轻拂。这里没有任何威胁，只有平和与安宁...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 安神收功
+    duration: 420  # 7分钟
+    light:
+      color: "#F5DEB3"  # 小麦色
+      brightness: 60
+      transition: 4000
+      pattern: static
+    audio:
+      file: content/audio/chinese_zither.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/moonlit_garden.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 你已经做得很好了。恐惧只是暂时的云雾，而你内心的光明永远存在。带着这份安宁，你可以面对任何挑战...
+      voice: 中文女
+      emotion: encouraging
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 3

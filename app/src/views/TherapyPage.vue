@@ -1,8 +1,7 @@
 <template>
   <div class="therapy-page">
-    <!-- 视觉内容背景 -->
     <div class="therapy-page__visual">
-      <video 
+      <video
         ref="videoRef"
         class="therapy-page__video"
         autoplay
@@ -14,116 +13,168 @@
       </video>
       <div class="therapy-page__overlay"></div>
     </div>
-    
-    <!-- 控制面板 -->
+
     <div class="therapy-page__panel animate-fadeIn">
       <h1 class="therapy-page__title">{{ $t('therapy.title') }}</h1>
-      
-      <!-- 当前阶段 -->
+
       <div class="therapy-page__phase card card--glass">
-        <p class="therapy-page__phase-label">{{ $t('therapy.currentPhase') }}</p>
-        <p class="therapy-page__phase-name">{{ currentPhase?.name || '准备中' }}</p>
+        <template v-if="activeScreenPrompt">
+          <p class="therapy-page__prompt-title">{{ activeScreenPrompt.title }}</p>
+          <p
+            v-for="line in activeScreenPrompt.lines"
+            :key="`${activeScreenPrompt.startSecond}-${line}`"
+            class="therapy-page__prompt-line"
+          >
+            {{ line }}
+          </p>
+        </template>
+        <template v-else>
+          <p class="therapy-page__phase-label">{{ $t('therapy.currentPhase') }}</p>
+          <p class="therapy-page__phase-name">
+            {{ currentPhase?.name || $t('common.loading') }}
+          </p>
+        </template>
       </div>
-      
-      <!-- 进度 -->
+
       <div class="therapy-page__progress">
         <div class="therapy-page__progress-info">
           <span>{{ $t('therapy.totalProgress') }}</span>
           <span>{{ progressPercent }}%</span>
         </div>
         <div class="therapy-page__progress-bar">
-          <div 
+          <div
             class="therapy-page__progress-fill"
             :style="{ width: `${progressPercent}%` }"
           ></div>
         </div>
       </div>
-      
-      <!-- 剩余时间 -->
+
       <div class="therapy-page__time">
         <p class="therapy-page__time-label">{{ $t('therapy.remainingTime') }}</p>
         <p class="therapy-page__time-value">{{ formatTime(remainingTime) }}</p>
       </div>
-      
-      <!-- 控制按钮 -->
-      <div class="therapy-page__controls">
-        <button 
-          class="btn btn--secondary btn--icon"
-          @click="togglePause"
-          :title="isPaused ? $t('common.resume') : $t('common.pause')"
-          :aria-label="isPaused ? '恢复疗愈' : '暂停疗愈'"
-        >
-          <svg v-if="!isPaused" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/>
-            <rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/>
-          </svg>
-          <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
-          </svg>
-        </button>
-        
-        <button 
-          class="btn btn--secondary btn--icon"
-          @click="skipPhase"
-          :title="$t('common.skip')"
-          aria-label="跳过当前阶段"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M5 4L15 12L5 20V4Z" fill="currentColor"/>
-            <rect x="17" y="4" width="3" height="16" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
-        
-        <button 
-          class="btn btn--ghost btn--icon"
-          @click="showEndConfirm = true"
-          :title="$t('common.end')"
-          aria-label="结束疗愈"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor"/>
-          </svg>
-        </button>
-      </div>
-      
-      <p class="therapy-page__hint">{{ $t('therapy.pauseHint') }}</p>
-    </div>
-    
-    <!-- 结束确认弹窗 -->
-    <div v-if="showEndConfirm" class="therapy-page__modal" role="dialog" aria-modal="true">
-      <div class="therapy-page__modal-content card animate-fadeIn">
-        <h3>{{ $t('therapy.endConfirm') }}</h3>
-        <p>{{ $t('therapy.endHint') }}</p>
-        <div class="therapy-page__modal-actions">
-          <button class="btn btn--secondary" @click="showEndConfirm = false">
-            {{ $t('common.cancel') }}
-          </button>
-          <button class="btn btn--primary" @click="endTherapy">
-            {{ $t('common.confirm') }}
-          </button>
+
+      <div class="therapy-page__time-stats">
+        <div class="therapy-page__time-stat">
+          <p class="therapy-page__time-stat-label">{{ $t('therapy.plannedDuration') }}</p>
+          <p class="therapy-page__time-stat-value">{{ formatTime(totalDuration) }}</p>
+        </div>
+        <div class="therapy-page__time-stat">
+          <p class="therapy-page__time-stat-label">{{ $t('therapy.totalElapsed') }}</p>
+          <p class="therapy-page__time-stat-value">{{ formatTime(totalElapsedTime) }}</p>
         </div>
       </div>
+
+      <div class="therapy-page__controls">
+        <button
+          class="therapy-page__control-btn"
+          @click="togglePause"
+          :disabled="isStopping || isAdjustingIntensity"
+          :title="isPaused ? $t('common.resume') : $t('common.pause')"
+          :aria-label="isPaused ? $t('common.resume') : $t('common.pause')"
+        >
+          {{ isPaused ? $t('common.resume') : $t('common.pause') }}
+        </button>
+
+        <button
+          class="therapy-page__control-btn"
+          @click="adjustIntensity('relax')"
+          :disabled="isStopping || isAdjustingIntensity || !canRelaxMore"
+          :title="$t('therapy.relaxMore')"
+          :aria-label="$t('therapy.relaxMore')"
+        >
+          {{ $t('therapy.relaxMore') }}
+        </button>
+
+        <button
+          class="therapy-page__control-btn"
+          @click="adjustIntensity('intensify')"
+          :disabled="isStopping || isAdjustingIntensity || !canIntensifyMore"
+          :title="$t('therapy.intensifyMore')"
+          :aria-label="$t('therapy.intensifyMore')"
+        >
+          {{ $t('therapy.intensifyMore') }}
+        </button>
+
+        <button
+          class="therapy-page__control-btn therapy-page__control-btn--danger"
+          @click="endTherapy"
+          :disabled="isStopping || isAdjustingIntensity"
+          :title="$t('common.end')"
+          :aria-label="$t('common.end')"
+        >
+          {{ $t('common.end') }}
+        </button>
+      </div>
+
+      <p v-if="controlFeedback" class="therapy-page__control-feedback">
+        {{ controlFeedback }}
+      </p>
+
+      <p class="therapy-page__hint">{{ $t('therapy.pauseHint') }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
 import { useSessionStore } from '@/stores/session'
-import type { TherapyPhase } from '@/types'
+import type {
+  TherapyAdjustmentDirection,
+  TherapyPhase,
+  TherapyScreenPrompt,
+} from '@/types'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
+const { t } = useI18n()
 
 const videoRef = ref<HTMLVideoElement | null>(null)
-const showEndConfirm = ref(false)
-const currentPhaseIndex = ref(0)
+const isStopping = ref(false)
+const isAdjustingIntensity = ref(false)
 const elapsedTime = ref(0)
+const wallClockNow = ref(Date.now())
+const controlFeedback = ref<string | null>(null)
 const timer = ref<number | null>(null)
+let controlFeedbackTimer: number | null = null
 
 const isPaused = computed(() => sessionStore.isPaused)
 const currentPlan = computed(() => sessionStore.currentPlan)
+const currentRuntimeIntensityLevel = computed(() =>
+  currentPlan.value?.runtimeIntensityLevel ?? null,
+)
+const canRelaxMore = computed(() =>
+  currentRuntimeIntensityLevel.value !== null
+    ? currentRuntimeIntensityLevel.value > 1
+    : currentPlan.value?.intensity
+      ? currentPlan.value.intensity !== 'low'
+      : false,
+)
+const canIntensifyMore = computed(() =>
+  currentRuntimeIntensityLevel.value !== null
+    ? currentRuntimeIntensityLevel.value < 5
+    : currentPlan.value?.intensity
+      ? currentPlan.value.intensity !== 'high'
+      : false,
+)
+
+const currentPhaseIndex = computed(() => {
+  const phases = currentPlan.value?.phases
+  if (!phases?.length) return 0
+
+  let elapsed = 0
+  for (let index = 0; index < phases.length; index++) {
+    elapsed += phases[index].duration
+    if (elapsedTime.value < elapsed || index === phases.length - 1) {
+      return index
+    }
+  }
+
+  return 0
+})
 
 const currentPhase = computed<TherapyPhase | null>(() => {
   if (!currentPlan.value?.phases?.length) return null
@@ -132,8 +183,68 @@ const currentPhase = computed<TherapyPhase | null>(() => {
 
 const totalDuration = computed(() => currentPlan.value?.duration || 900)
 
+const isValidScreenPromptTimeline = (
+  prompts: TherapyScreenPrompt[] | undefined,
+  duration: number,
+) => {
+  if (!Array.isArray(prompts) || !prompts.length || duration <= 0) {
+    return false
+  }
+
+  let expectedStart = 0
+  for (const prompt of prompts) {
+    if (
+      typeof prompt?.startSecond !== 'number' ||
+      typeof prompt?.endSecond !== 'number' ||
+      typeof prompt?.title !== 'string' ||
+      prompt.startSecond !== expectedStart ||
+      prompt.startSecond >= prompt.endSecond ||
+      prompt.endSecond > duration ||
+      !prompt.title.trim() ||
+      !Array.isArray(prompt.lines) ||
+      !prompt.lines.length ||
+      prompt.lines.some((line) => !line.trim())
+    ) {
+      return false
+    }
+
+    expectedStart = prompt.endSecond
+  }
+
+  return expectedStart === duration
+}
+
+const validatedScreenPrompts = computed(() => {
+  const prompts = currentPlan.value?.screenPrompts
+  return isValidScreenPromptTimeline(prompts, totalDuration.value) ? prompts : null
+})
+
+const activeScreenPrompt = computed<TherapyScreenPrompt | null>(() => {
+  const prompts = validatedScreenPrompts.value
+  if (!prompts) {
+    return null
+  }
+
+  return (
+    prompts.find(
+      (prompt) =>
+        prompt.startSecond <= elapsedTime.value &&
+        elapsedTime.value < prompt.endSecond,
+    ) ?? null
+  )
+})
+
 const remainingTime = computed(() => {
   return Math.max(0, totalDuration.value - elapsedTime.value)
+})
+
+const totalElapsedTime = computed(() => {
+  const startTime = sessionStore.currentSession?.startTime
+  if (!startTime) return 0
+  return Math.max(
+    0,
+    Math.round((wallClockNow.value - new Date(startTime).getTime()) / 1000),
+  )
 })
 
 const progressPercent = computed(() => {
@@ -148,12 +259,13 @@ const formatTime = (seconds: number) => {
 
 const startTimer = () => {
   timer.value = window.setInterval(() => {
+    wallClockNow.value = Date.now()
     if (!isPaused.value) {
       elapsedTime.value++
-      
-      // 检查是否完成
+
+      // End the session when the timer reaches the target duration.
       if (elapsedTime.value >= totalDuration.value) {
-        endTherapy()
+        void endTherapy()
       }
     }
   }, 1000)
@@ -167,18 +279,81 @@ const togglePause = async () => {
   }
 }
 
-const skipPhase = () => {
-  if (currentPlan.value?.phases && currentPhaseIndex.value < currentPlan.value.phases.length - 1) {
-    currentPhaseIndex.value++
+const setControlFeedback = (message: string | null) => {
+  controlFeedback.value = message
+
+  if (controlFeedbackTimer) {
+    clearTimeout(controlFeedbackTimer)
+    controlFeedbackTimer = null
+  }
+
+  if (message) {
+    controlFeedbackTimer = window.setTimeout(() => {
+      controlFeedback.value = null
+      controlFeedbackTimer = null
+    }, 2500)
+  }
+}
+
+const adjustIntensity = async (direction: TherapyAdjustmentDirection) => {
+  if (isStopping.value || isAdjustingIntensity.value) {
+    return
+  }
+
+  if (direction === 'relax' && !canRelaxMore.value) {
+    setControlFeedback(t('therapy.atMostRelaxed'))
+    return
+  }
+
+  if (direction === 'intensify' && !canIntensifyMore.value) {
+    setControlFeedback(t('therapy.atMostIntense'))
+    return
+  }
+
+  isAdjustingIntensity.value = true
+
+  try {
+    const response = await sessionStore.adjustTherapyIntensity(direction)
+    if (!response.changed) {
+      setControlFeedback(
+        response.atBoundary
+          ? direction === 'relax'
+            ? t('therapy.atMostRelaxed')
+            : t('therapy.atMostIntense')
+          : t('therapy.adjustmentUnavailable'),
+      )
+    } else {
+      setControlFeedback(null)
+    }
+  } catch (error) {
+    console.error('Failed to adjust therapy intensity:', error)
+    setControlFeedback(t('therapy.adjustmentFailed'))
+  } finally {
+    isAdjustingIntensity.value = false
   }
 }
 
 const endTherapy = async () => {
+  if (isStopping.value) {
+    return
+  }
+
+  isStopping.value = true
+
   if (timer.value) {
     clearInterval(timer.value)
+    timer.value = null
   }
-  await sessionStore.endSession()
-  router.push('/report')
+
+  try {
+    // Start backend stop-now teardown without blocking the report transition.
+    const stopNowRequest = sessionStore.stopNowSession()
+    await sessionStore.endSession()
+    await router.push('/report')
+    void stopNowRequest
+  } finally {
+    isStopping.value = false
+  }
 }
 
 onMounted(() => {
@@ -193,6 +368,9 @@ onUnmounted(() => {
   if (timer.value) {
     clearInterval(timer.value)
   }
+  if (controlFeedbackTimer) {
+    clearTimeout(controlFeedbackTimer)
+  }
 })
 </script>
 
@@ -203,19 +381,19 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   &__visual {
     position: absolute;
     inset: 0;
     z-index: 0;
   }
-  
+
   &__video {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   &__overlay {
     position: absolute;
     inset: 0;
@@ -225,7 +403,7 @@ onUnmounted(() => {
       rgba(22, 33, 62, 0.6) 100%
     );
   }
-  
+
   &__panel {
     position: relative;
     z-index: 1;
@@ -233,41 +411,58 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    width: 100%;
     padding: 48px;
-    max-width: 400px;
+    max-width: 720px;
+    box-sizing: border-box;
     background: rgba(22, 33, 62, 0.9);
     backdrop-filter: blur(20px);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
   }
-  
+
   &__title {
     font-size: 1.5rem;
     margin-bottom: 32px;
     color: var(--accent-primary);
   }
-  
+
   &__phase {
     width: 100%;
     margin-bottom: 24px;
   }
-  
+
   &__phase-label {
     font-size: 0.875rem;
     color: var(--text-muted);
     margin-bottom: 8px;
   }
-  
+
   &__phase-name {
     font-size: 1.25rem;
     font-weight: 600;
   }
-  
+
+  &__prompt-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  &__prompt-line {
+    color: var(--text-secondary);
+    line-height: 1.7;
+
+    &:not(:last-child) {
+      margin-bottom: 6px;
+    }
+  }
+
   &__progress {
     width: 100%;
     margin-bottom: 24px;
   }
-  
+
   &__progress-info {
     display: flex;
     justify-content: space-between;
@@ -275,78 +470,121 @@ onUnmounted(() => {
     color: var(--text-secondary);
     margin-bottom: 8px;
   }
-  
+
   &__progress-bar {
     height: 8px;
     background: var(--bg-tertiary);
     border-radius: var(--radius-full);
     overflow: hidden;
   }
-  
+
   &__progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
     border-radius: var(--radius-full);
     transition: width 1s linear;
   }
-  
+
   &__time {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
   }
-  
+
   &__time-label {
     font-size: 0.875rem;
     color: var(--text-muted);
     margin-bottom: 8px;
   }
-  
+
   &__time-value {
     font-size: 3rem;
     font-weight: 300;
     font-variant-numeric: tabular-nums;
     color: var(--text-primary);
   }
-  
-  &__controls {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
+
+  &__time-stats {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
   }
-  
+
+  &__time-stat {
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+  }
+
+  &__time-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  &__time-stat-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+  }
+
+  &__controls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  &__control-btn {
+    min-height: 48px;
+    padding: 0 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-full);
+    background: rgba(34, 79, 130, 0.92);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease;
+
+    &:not(:disabled):hover {
+      transform: translateY(-1px);
+      background: rgba(43, 96, 154, 0.98);
+      border-color: rgba(78, 205, 196, 0.35);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    &--danger {
+      background: rgba(53, 69, 100, 0.95);
+    }
+  }
+
+  &__control-feedback {
+    min-height: 20px;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    color: var(--accent-primary);
+  }
+
   &__hint {
     font-size: 0.875rem;
     color: var(--text-muted);
   }
-  
-  &__modal {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-  }
-  
-  &__modal-content {
-    max-width: 400px;
-    text-align: center;
-    
-    h3 {
-      margin-bottom: 16px;
+
+  @media (max-width: 720px) {
+    &__controls {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    
-    p {
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
-  }
-  
-  &__modal-actions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
   }
 }
 </style>

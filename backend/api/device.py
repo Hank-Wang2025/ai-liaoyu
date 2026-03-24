@@ -1,12 +1,60 @@
 """设备控制 API 路由"""
+from pathlib import Path
+from typing import Optional, Dict, Any, List
+
+import yaml
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any
 from loguru import logger
 
+from services.audio_controller import get_shared_audio_player
 from services.device_manager import get_device_manager
 
 router = APIRouter()
+
+
+def _load_background_music_playlist() -> List[str]:
+    manifest_path = Path(__file__).resolve().parents[2] / "content" / "audio" / "audio_manifest.yaml"
+    if not manifest_path.exists():
+        raise HTTPException(status_code=400, detail="Audio manifest not found")
+
+    with manifest_path.open("r", encoding="utf-8") as file:
+        manifest = yaml.safe_load(file) or {}
+
+    playlist: List[str] = []
+    for tracks in (manifest.get("background_music") or {}).values():
+        for track in tracks or []:
+            filename = track.get("filename")
+            if filename:
+                playlist.append(f"content/audio/{filename}")
+
+    if not playlist:
+        raise HTTPException(status_code=400, detail="No background music tracks available")
+
+    return playlist
+
+
+def _resolve_next_track(current_file: Optional[str], playlist: List[str]) -> str:
+    if not current_file or current_file not in playlist:
+        return playlist[0]
+
+    current_index = playlist.index(current_file)
+    return playlist[(current_index + 1) % len(playlist)]
+
+
+def _track_exists(track_path: str) -> bool:
+    candidate = Path(track_path)
+    if candidate.exists():
+        return True
+
+    return (Path(__file__).resolve().parents[2] / candidate).exists()
+
+
+def _filter_existing_playlist(playlist: List[str]) -> List[str]:
+    existing_tracks = [track for track in playlist if _track_exists(track)]
+    if not existing_tracks:
+        raise HTTPException(status_code=400, detail="No playable background music tracks available")
+    return existing_tracks
 
 
 class LightControlRequest(BaseModel):
@@ -19,7 +67,7 @@ class LightControlRequest(BaseModel):
 
 class AudioControlRequest(BaseModel):
     """音频控制请求"""
-    action: str = Field(..., description="操作: play/stop/pause/resume/volume")
+    action: str = Field(..., description="操作: play/stop/pause/resume/volume/next")
     file: Optional[str] = Field(default=None, description="音频文件路径")
     volume: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="音量 0-1")
     loop: bool = Field(default=True, description="是否循环播放")
@@ -146,15 +194,17 @@ async def control_audio(request: AudioControlRequest):
             if hasattr(controller, 'play_background_music') or hasattr(controller, 'stop_all'):
                 audio_player = controller
                 break
-
         if audio_player is None:
-            logger.warning("没有已连接的音频设备，返回模拟结果")
-            return {
-                "success": True,
-                "simulated": True,
-                "action": request.action,
-                "message": f"音频指令 [{request.action}] 已发送（模拟模式）"
-            }
+            try:
+                audio_player = await get_shared_audio_player()
+            except Exception:
+                logger.warning("No connected audio device; returning simulated result")
+                return {
+                    "success": True,
+                    "simulated": True,
+                    "action": request.action,
+                    "message": f"Audio command [{request.action}] sent in simulated mode"
+                }
 
         if request.action == "play" and request.file:
             await audio_player.play_background_music(
@@ -163,6 +213,21 @@ async def control_audio(request: AudioControlRequest):
                 loop=request.loop,
                 fade_in_ms=request.fade_ms
             )
+        elif request.action == "next":
+            status = audio_player.get_status() if hasattr(audio_player, "get_status") else {}
+            bgm_status = status.get("bgm") or {}
+            playlist = _filter_existing_playlist(_load_background_music_playlist())
+            next_file = _resolve_next_track(
+                bgm_status.get("file"),
+                playlist
+            )
+            await audio_player.play_background_music(
+                next_file,
+                volume=bgm_status.get("volume") if bgm_status.get("volume") is not None else (request.volume or 0.7),
+                loop=bgm_status.get("loop") if bgm_status.get("loop") is not None else request.loop,
+                fade_in_ms=request.fade_ms
+            )
+            request.file = next_file
         elif request.action == "stop":
             await audio_player.stop_all(fade_out_ms=request.fade_ms)
         elif request.action == "pause" and hasattr(audio_player, 'pause'):
@@ -177,8 +242,11 @@ async def control_audio(request: AudioControlRequest):
             "success": True,
             "simulated": False,
             "action": request.action,
+            "file": request.file,
             "message": f"音频指令 [{request.action}] 执行成功"
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"音频控制失败: {e}")
         raise HTTPException(status_code=500, detail=f"音频控制失败: {e}")

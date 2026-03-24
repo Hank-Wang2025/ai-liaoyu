@@ -1,16 +1,6 @@
-# API 路由模块
-from .emotion import router as emotion_router
-from .therapy import router as therapy_router
-from .device import router as device_router
-from .session import router as session_router
-from .admin import router as admin_router
-from .community import router as community_router
+"""API 路由包。
 
-__all__ = [
-    "emotion_router",
-    "therapy_router", 
-    "device_router",
-    "session_router",
-    "admin_router",
-    "community_router"
-]
+路由模块在 `main.py` 中按需加载，这里不做聚合导入，避免可选模块失败时阻断启动。
+"""
+
+__all__ = []

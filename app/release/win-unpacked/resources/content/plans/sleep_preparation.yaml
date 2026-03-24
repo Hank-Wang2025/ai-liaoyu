@@ -1,0 +1,93 @@
+# 睡前放松方案
+id: sleep_preparation
+name: 安眠引导 - 睡前放松
+description: 专为睡前设计的深度放松方案，帮助平静心神，准备进入优质睡眠
+target_emotions:
+  - anxious
+  - tired
+  - neutral
+intensity: low
+style: modern
+duration: 1500  # 25分钟
+
+phases:
+  - name: 日间释放
+    duration: 300  # 5分钟
+    light:
+      color: "#483D8B"  # 暗紫色
+      brightness: 25
+      transition: 8000
+      pattern: static
+    audio:
+      file: content/audio/night_crickets.mp3
+      volume: 40
+      loop: true
+      fade_in: 5000
+      fade_out: 2000
+    visual:
+      file: content/visual/starry_night.mp4
+      loop: true
+      brightness: 50
+    voice_guide:
+      text: 夜晚来临，是时候放下一天的疲惫了。让我们一起，慢慢地释放今天积累的所有压力和紧张...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.8
+    chair:
+      mode: gentle
+      intensity: 2
+
+  - name: 身体放松
+    duration: 600  # 10分钟
+    light:
+      color: "#191970"  # 午夜蓝
+      brightness: 15
+      transition: 6000
+      pattern: breath
+    audio:
+      file: content/audio/delta_waves.mp3
+      volume: 35
+      loop: true
+      fade_in: 3000
+      fade_out: 2000
+    visual:
+      file: content/visual/moon_clouds.mp4
+      loop: true
+      brightness: 40
+    voice_guide:
+      text: 从头顶开始，让每一块肌肉都完全放松...额头放松...眼睛放松...脸颊放松...下巴放松...让放松的感觉慢慢流向全身...
+      voice: 中文女
+      emotion: calm
+      speed: 0.75
+    chair:
+      mode: relax
+      intensity: 2
+    scent:
+      scent_type: lavender
+      intensity: 6
+
+  - name: 入眠引导
+    duration: 600  # 10分钟
+    light:
+      color: "#000080"  # 海军蓝
+      brightness: 5
+      transition: 10000
+      pattern: static
+    audio:
+      file: content/audio/sleep_ambient.mp3
+      volume: 25
+      loop: true
+      fade_in: 2000
+      fade_out: 5000
+    visual:
+      file: content/visual/gentle_aurora.mp4
+      loop: true
+      brightness: 30
+    voice_guide:
+      text: 现在，让意识慢慢沉入宁静的深处...你是安全的...你是被爱的...让睡眠温柔地拥抱你...
+      voice: 中文女
+      emotion: gentle
+      speed: 0.7
+    chair:
+      mode: gentle
+      intensity: 1

@@ -1,0 +1,261 @@
+﻿<style>
+  .mic-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .mic-options .card {
+    cursor: pointer;
+  }
+
+  .mic-stage {
+    min-height: 240px;
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at center, rgba(78,205,196,0.10) 0%, rgba(78,205,196,0.04) 30%, rgba(15,52,96,0.55) 60%, rgba(12,24,44,0.85) 100%),
+      linear-gradient(180deg, rgba(22,33,62,0.92), rgba(15,24,45,0.92));
+    overflow: hidden;
+  }
+
+  .mic-shell {
+    position: relative;
+    width: 210px;
+    height: 210px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mic-ring,
+  .mic-glow,
+  .mic-glow-outer {
+    position: absolute;
+    border-radius: 999px;
+  }
+
+  .mic-btn {
+    position: relative;
+    z-index: 3;
+    width: 112px;
+    height: 112px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f1f5f9;
+    background: linear-gradient(180deg, rgba(28,73,122,0.96), rgba(21,56,100,0.96));
+    border: 1px solid rgba(120, 226, 220, 0.24);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      0 12px 36px rgba(5, 10, 24, 0.34);
+  }
+
+  .mic-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .mic-shell--a .mic-ring {
+    width: 176px;
+    height: 176px;
+    border: 4px solid rgba(78,205,196,0.84);
+    box-shadow: 0 0 24px rgba(78,205,196,0.30);
+    animation: haloBreathe 3.2s ease-in-out infinite;
+  }
+
+  .mic-shell--a .mic-glow {
+    width: 152px;
+    height: 152px;
+    background: radial-gradient(circle, rgba(78,205,196,0.18) 0%, rgba(78,205,196,0.08) 55%, rgba(78,205,196,0.00) 78%);
+    animation: glowBreathe 3.2s ease-in-out infinite;
+  }
+
+  .mic-shell--a .mic-btn {
+    animation: buttonBreathe 3.2s ease-in-out infinite;
+  }
+
+  .mic-shell--b .mic-ring {
+    width: 188px;
+    height: 188px;
+    border: 3px solid rgba(78,205,196,0.58);
+    animation: haloBreatheStrong 2.8s ease-in-out infinite;
+  }
+
+  .mic-shell--b .mic-glow {
+    width: 152px;
+    height: 152px;
+    border: 10px solid rgba(78,205,196,0.10);
+    animation: haloBreatheStrong 2.8s ease-in-out infinite;
+  }
+
+  .mic-shell--b .mic-glow-outer {
+    width: 206px;
+    height: 206px;
+    background: radial-gradient(circle, rgba(78,205,196,0.16) 0%, rgba(78,205,196,0.05) 52%, rgba(78,205,196,0.00) 74%);
+    animation: glowBreathe 2.8s ease-in-out infinite;
+  }
+
+  .mic-shell--b .mic-btn {
+    animation: buttonBreatheStrong 2.8s ease-in-out infinite;
+  }
+
+  .mic-shell--c .mic-ring {
+    width: 164px;
+    height: 164px;
+    border: 3px solid rgba(78,205,196,0.56);
+  }
+
+  .mic-shell--c .mic-glow {
+    width: 198px;
+    height: 198px;
+    background: radial-gradient(circle, rgba(78,205,196,0.18) 0%, rgba(78,205,196,0.10) 36%, rgba(78,205,196,0.02) 58%, rgba(78,205,196,0.00) 76%);
+    animation: softHaloBreathe 3.8s ease-in-out infinite;
+  }
+
+  .mic-shell--c .mic-btn {
+    animation: buttonBreathe 3.8s ease-in-out infinite;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #99f6e4;
+    background: rgba(78,205,196,0.12);
+    border: 1px solid rgba(78,205,196,0.16);
+  }
+
+  .card-body p {
+    margin-bottom: 10px;
+  }
+
+  .mini-notes {
+    color: rgba(226,232,240,0.80);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  @keyframes haloBreathe {
+    0%, 100% { transform: scale(1); opacity: 0.84; }
+    50% { transform: scale(1.10); opacity: 1; }
+  }
+
+  @keyframes haloBreatheStrong {
+    0%, 100% { transform: scale(0.98); opacity: 0.66; }
+    50% { transform: scale(1.16); opacity: 1; }
+  }
+
+  @keyframes glowBreathe {
+    0%, 100% { transform: scale(0.96); opacity: 0.70; }
+    50% { transform: scale(1.14); opacity: 1; }
+  }
+
+  @keyframes softHaloBreathe {
+    0%, 100% { transform: scale(0.94); opacity: 0.60; }
+    50% { transform: scale(1.10); opacity: 0.92; }
+  }
+
+  @keyframes buttonBreathe {
+    0%, 100% { transform: scale(1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 36px rgba(5, 10, 24, 0.34); }
+    50% { transform: scale(1.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 44px rgba(5, 10, 24, 0.42); }
+  }
+
+  @keyframes buttonBreatheStrong {
+    0%, 100% { transform: scale(0.98); box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 36px rgba(5, 10, 24, 0.34); }
+    50% { transform: scale(1.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 22px 52px rgba(5, 10, 24, 0.46); }
+  }
+</style>
+
+<h2>&#40614;&#20811;&#39118;&#20809;&#22280;&#21644;&#21628;&#21560;&#21160;&#30011;&#26041;&#26696;</h2>
+<p class="subtitle">
+  A &#26159;&#25105;&#30340;&#25512;&#33616;&#26041;&#26696;&#65292;&#26368;&#25509;&#36817;&#20320;&#35828;&#30340;&#8220;&#20013;&#22830;&#20809;&#22280;&#26356;&#22823;&#12289;&#26356;&#21253;&#35065;&#65292;&#40614;&#20811;&#39118;&#26377;&#21628;&#21560;&#21160;&#25928;&#8221;&#12290;
+</p>
+
+<div class="cards mic-options">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mic-stage">
+        <div class="mic-shell mic-shell--a">
+          <div class="mic-glow"></div>
+          <div class="mic-ring"></div>
+          <div class="mic-btn">
+            <svg class="mic-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M24 4C20.6863 4 18 6.68629 18 10V24C18 27.3137 20.6863 30 24 30C27.3137 30 30 27.3137 30 24V10C30 6.68629 27.3137 4 24 4Z" stroke="currentColor" stroke-width="3"/>
+              <path d="M12 22V24C12 30.6274 17.3726 36 24 36C30.6274 36 36 30.6274 36 24V22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 36V44M18 44H30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag">Recommended</div>
+      <h3>A - Wrapped Halo</h3>
+      <p>&#20809;&#22280;&#26126;&#26174;&#25193;&#22823;&#24182;&#21253;&#22312;&#40614;&#20811;&#39118;&#21608;&#22260;&#65292;&#21628;&#21560;&#33410;&#22863;&#28201;&#21644;&#12290;</p>
+      <div class="mini-notes">
+        &#36866;&#21512;&#39318;&#39029;&#20837;&#21475;&#22330;&#26223;&#65292;&#35270;&#35273;&#28966;&#28857;&#31283;&#65292;&#25913;&#21160;&#26368;&#23567;&#12290;
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mic-stage">
+        <div class="mic-shell mic-shell--b">
+          <div class="mic-glow-outer"></div>
+          <div class="mic-glow"></div>
+          <div class="mic-ring"></div>
+          <div class="mic-btn">
+            <svg class="mic-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M24 4C20.6863 4 18 6.68629 18 10V24C18 27.3137 20.6863 30 24 30C27.3137 30 30 27.3137 30 24V10C30 6.68629 27.3137 4 24 4Z" stroke="currentColor" stroke-width="3"/>
+              <path d="M12 22V24C12 30.6274 17.3726 36 24 36C30.6274 36 36 30.6274 36 24V22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 36V44M18 44H30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B - Stronger Pulse</h3>
+      <p>&#21452;&#23618;&#20809;&#22280;&#22806;&#25193;&#26356;&#26126;&#26174;&#65292;&#21628;&#21560;&#21160;&#30011;&#26356;&#24378;&#65292;&#31185;&#25216;&#24863;&#26356;&#37325;&#12290;</p>
+      <div class="mini-notes">
+        &#21560;&#24341;&#21147;&#24378;&#65292;&#20294;&#22914;&#26524;&#22826;&#22823;&#21487;&#33021;&#27604;&#36739;&#25250;&#30524;&#12290;
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mic-stage">
+        <div class="mic-shell mic-shell--c">
+          <div class="mic-glow"></div>
+          <div class="mic-ring"></div>
+          <div class="mic-btn">
+            <svg class="mic-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M24 4C20.6863 4 18 6.68629 18 10V24C18 27.3137 20.6863 30 24 30C27.3137 30 30 27.3137 30 24V10C30 6.68629 27.3137 4 24 4Z" stroke="currentColor" stroke-width="3"/>
+              <path d="M12 22V24C12 30.6274 17.3726 36 24 36C30.6274 36 36 30.6274 36 24V22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 36V44M18 44H30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C - Soft Diffuse Glow</h3>
+      <p>&#20809;&#26197;&#33539;&#22260;&#26356;&#22823;&#65292;&#20294;&#36793;&#30028;&#26356;&#26580;&#65292;&#25972;&#20307;&#24863;&#35273;&#26356;&#23433;&#38745;&#12290;</p>
+      <div class="mini-notes">
+        &#27675;&#22260;&#24456;&#26580;&#65292;&#20294;&#8220;&#21253;&#35065;&#24863;&#8221;&#20250;&#27604; A &#31245;&#24369;&#12290;
+      </div>
+    </div>
+  </div>
+</div>

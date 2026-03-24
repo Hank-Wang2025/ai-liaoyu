@@ -6,10 +6,19 @@ from loguru import logger
 
 from services.session_manager import session_manager
 from services.report_generator import report_generator
+from services.plan_manager import PlanManager
 from models.emotion import EmotionCategory, EmotionState
 from datetime import datetime
 
 router = APIRouter()
+_plan_manager: Optional[PlanManager] = None
+
+
+def get_plan_manager() -> PlanManager:
+    global _plan_manager
+    if _plan_manager is None:
+        _plan_manager = PlanManager()
+    return _plan_manager
 
 
 class StartSessionResponse(BaseModel):
@@ -258,6 +267,11 @@ async def get_session_report(session_id: str):
 
         # 生成报告
         report = await report_generator.generate_report(session)
+        planned_duration_seconds = None
+        if session.plan_id:
+            plan = get_plan_manager().get_plan_by_id(session.plan_id)
+            if plan:
+                planned_duration_seconds = plan.duration
 
         return {
             "session_id": session_id,
@@ -265,7 +279,9 @@ async def get_session_report(session_id: str):
             "status": report.status.value,
             "therapy_start_time": report.therapy_start_time.isoformat() if report.therapy_start_time else None,
             "therapy_end_time": report.therapy_end_time.isoformat() if report.therapy_end_time else None,
+            "duration_seconds": report.duration_seconds,
             "duration_minutes": report.duration_minutes,
+            "planned_duration_seconds": planned_duration_seconds,
             "plan_name": report.plan_name,
             "initial_emotion": {
                 "category": report.initial_emotion_category.value,

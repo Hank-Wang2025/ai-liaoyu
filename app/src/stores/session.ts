@@ -1,133 +1,309 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import type { EmotionState, TherapyPlan, Session } from '@/types'
-import { therapyApi, reportApi } from '@/api'
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import type {
+  EmotionState,
+  Session,
+  TherapyAdjustmentDirection,
+  TherapyPlan,
+  TherapyScreenPrompt,
+  TherapyRuntimeAdjustmentResponse,
+} from "@/types";
+import { reportApi, therapyApi } from "@/api";
 
-export const useSessionStore = defineStore('session', () => {
-  // 状态
-  const currentSession = ref<Session | null>(null)
-  const emotionHistory = ref<EmotionState[]>([])
-  const currentPlan = ref<TherapyPlan | null>(null)
-  const isTherapyActive = ref(false)
-  const isPaused = ref(false)
-  // 后端会话 ID（与后端同步）
-  const backendSessionId = ref<string | null>(null)
-  // 后端方案 ID
-  const backendPlanId = ref<string | null>(null)
+const cloneScreenPrompt = (
+  prompt: TherapyScreenPrompt,
+): TherapyScreenPrompt => ({
+  startSecond: prompt.startSecond,
+  endSecond: prompt.endSecond,
+  title: prompt.title,
+  lines: [...prompt.lines],
+});
 
-  // 计算属性
-  const initialEmotion = computed(() => emotionHistory.value[0] || null)
-  const latestEmotion = computed(() => emotionHistory.value[emotionHistory.value.length - 1] || null)
+const normalizeScreenPrompts = (
+  rawPrompts: any,
+  fallbackPrompts: TherapyScreenPrompt[] | undefined,
+): TherapyScreenPrompt[] | undefined => {
+  if (!Array.isArray(rawPrompts)) {
+    return fallbackPrompts?.map(cloneScreenPrompt);
+  }
+
+  const normalizedScreenPrompts = rawPrompts
+    .map((prompt: any, index: number) => {
+      const fallbackPrompt = fallbackPrompts?.[index];
+      const linesSource = Array.isArray(prompt?.lines)
+        ? prompt.lines
+        : (fallbackPrompt?.lines ?? []);
+
+      return {
+        startSecond: Number(
+          prompt?.startSecond ??
+            prompt?.start_second ??
+            fallbackPrompt?.startSecond ??
+            0,
+        ),
+        endSecond: Number(
+          prompt?.endSecond ??
+            prompt?.end_second ??
+            fallbackPrompt?.endSecond ??
+            0,
+        ),
+        title: String(prompt?.title ?? fallbackPrompt?.title ?? ""),
+        lines: linesSource.filter(
+          (line: unknown): line is string => typeof line === "string",
+        ),
+      };
+    })
+    .filter((prompt) => {
+      return (
+        prompt.lines.length > 0 ||
+        prompt.title.length > 0 ||
+        prompt.startSecond > 0 ||
+        prompt.endSecond > 0
+      );
+    });
+
+  if (!normalizedScreenPrompts.length) {
+    return fallbackPrompts?.map(cloneScreenPrompt);
+  }
+
+  return normalizedScreenPrompts;
+};
+
+export const useSessionStore = defineStore("session", () => {
+  const currentSession = ref<Session | null>(null);
+  const emotionHistory = ref<EmotionState[]>([]);
+  const currentPlan = ref<TherapyPlan | null>(null);
+  const isTherapyActive = ref(false);
+  const isPaused = ref(false);
+  const backendSessionId = ref<string | null>(null);
+  const backendPlanId = ref<string | null>(null);
+  let pendingStopNowRequest: Promise<void> | null = null;
+
+  const initialEmotion = computed(() => emotionHistory.value[0] || null);
+  const latestEmotion = computed(
+    () => emotionHistory.value[emotionHistory.value.length - 1] || null,
+  );
 
   const emotionImprovement = computed(() => {
-    if (!initialEmotion.value || !latestEmotion.value) return 0
-    // 计算情绪改善程度（效价变化）
-    return latestEmotion.value.valence - initialEmotion.value.valence
-  })
+    if (!initialEmotion.value || !latestEmotion.value) return 0;
+    return latestEmotion.value.valence - initialEmotion.value.valence;
+  });
 
-  // 方法：通过后端启动疗愈会话
+  function inferRuntimeIntensityLevel(
+    intensity: TherapyPlan["intensity"] | undefined,
+  ): number {
+    if (intensity === "low") return 1;
+    if (intensity === "high") return 5;
+    return 3;
+  }
+
+  function normalizeTherapyPlan(
+    rawPlan: any,
+    fallbackPlan: TherapyPlan | null,
+  ): TherapyPlan | null {
+    if (!rawPlan && !fallbackPlan) {
+      return null;
+    }
+
+    const phasesSource = Array.isArray(rawPlan?.phases)
+      ? rawPlan.phases
+      : (fallbackPlan?.phases ?? []);
+    const screenPromptsSource =
+      rawPlan?.screenPrompts ?? rawPlan?.screen_prompts;
+
+    return {
+      id: rawPlan?.id ?? fallbackPlan?.id ?? "",
+      name: rawPlan?.name ?? fallbackPlan?.name ?? "",
+      description: rawPlan?.description ?? fallbackPlan?.description ?? "",
+      targetEmotions:
+        rawPlan?.targetEmotions ??
+        rawPlan?.target_emotions ??
+        fallbackPlan?.targetEmotions ??
+        [],
+      intensity: rawPlan?.intensity ?? fallbackPlan?.intensity ?? "medium",
+      runtimeIntensityLevel:
+        rawPlan?.runtimeIntensityLevel ??
+        rawPlan?.runtime_intensity_level ??
+        fallbackPlan?.runtimeIntensityLevel ??
+        inferRuntimeIntensityLevel(
+          rawPlan?.intensity ?? fallbackPlan?.intensity ?? "medium",
+        ),
+      style: rawPlan?.style ?? fallbackPlan?.style ?? "modern",
+      duration: Number(rawPlan?.duration ?? fallbackPlan?.duration ?? 0),
+      phases: phasesSource.map((phase: any, index: number) => ({
+        name: phase?.name ?? fallbackPlan?.phases[index]?.name ?? "",
+        duration: Number(
+          phase?.duration ?? fallbackPlan?.phases[index]?.duration ?? 0,
+        ),
+        description:
+          phase?.description ?? fallbackPlan?.phases[index]?.description,
+      })),
+      screenPrompts: normalizeScreenPrompts(
+        screenPromptsSource,
+        fallbackPlan?.screenPrompts,
+      ),
+    };
+  }
+
+  function clearSessionState() {
+    currentSession.value = null;
+    emotionHistory.value = [];
+    currentPlan.value = null;
+    isTherapyActive.value = false;
+    isPaused.value = false;
+    backendSessionId.value = null;
+    backendPlanId.value = null;
+    pendingStopNowRequest = null;
+  }
+
   async function startSession(emotion: EmotionState, plan: TherapyPlan) {
-    // 本地状态
+    const normalizedPlan = normalizeTherapyPlan(plan, null) ?? plan;
+
     currentSession.value = {
-      id: '', // 将由后端返回
+      id: "",
       startTime: new Date(),
       endTime: null,
       initialEmotion: emotion,
       finalEmotion: null,
-      planUsed: plan
-    }
-    emotionHistory.value = [emotion]
-    currentPlan.value = plan
-    backendPlanId.value = plan.id
+      planUsed: normalizedPlan,
+    };
+    emotionHistory.value = [emotion];
+    currentPlan.value = normalizedPlan;
+    backendPlanId.value = normalizedPlan.id;
+    isTherapyActive.value = true;
+    isPaused.value = false;
+    pendingStopNowRequest = null;
 
-    // 调用后端启动疗愈
     try {
-      const result = await therapyApi.startTherapy(plan.id, {
+      const result = await therapyApi.startTherapy(normalizedPlan.id, {
         category: emotion.category,
         intensity: emotion.intensity,
         valence: emotion.valence,
-        arousal: emotion.arousal
-      })
-      backendSessionId.value = result.session_id
+        arousal: emotion.arousal,
+      });
+      backendSessionId.value = result.session_id;
       if (currentSession.value) {
-        currentSession.value.id = result.session_id
+        currentSession.value.id = result.session_id;
       }
     } catch (err) {
-      console.error('后端启动疗愈失败，使用本地模式:', err)
-      // 降级：使用本地 ID
-      const localId = crypto.randomUUID()
-      backendSessionId.value = localId
+      console.error("Backend therapy start failed, using local fallback:", err);
+      const localId = crypto.randomUUID();
+      backendSessionId.value = localId;
       if (currentSession.value) {
-        currentSession.value.id = localId
+        currentSession.value.id = localId;
       }
     }
-
-    isTherapyActive.value = true
-    isPaused.value = false
   }
 
   function addEmotionRecord(emotion: EmotionState) {
-    emotionHistory.value.push(emotion)
+    emotionHistory.value.push(emotion);
   }
 
   async function pauseTherapy() {
-    isPaused.value = true
+    isPaused.value = true;
     if (backendSessionId.value) {
       try {
-        await therapyApi.pauseTherapy(backendSessionId.value)
+        await therapyApi.pauseTherapy(backendSessionId.value);
       } catch (err) {
-        console.error('后端暂停失败:', err)
+        console.error("Backend pause failed:", err);
       }
     }
   }
 
   async function resumeTherapy() {
-    isPaused.value = false
+    isPaused.value = false;
     if (backendSessionId.value) {
       try {
-        await therapyApi.resumeTherapy(backendSessionId.value)
+        await therapyApi.resumeTherapy(backendSessionId.value);
       } catch (err) {
-        console.error('后端恢复失败:', err)
+        console.error("Backend resume failed:", err);
       }
     }
+  }
+
+  async function adjustTherapyIntensity(
+    direction: TherapyAdjustmentDirection,
+  ): Promise<TherapyRuntimeAdjustmentResponse> {
+    if (!backendSessionId.value) {
+      throw new Error("No active backend session");
+    }
+
+    const response = await therapyApi.adjustTherapyIntensity(
+      backendSessionId.value,
+      direction,
+    );
+    const normalizedPlan = normalizeTherapyPlan(
+      response.plan,
+      currentPlan.value,
+    );
+
+    if (normalizedPlan) {
+      response.plan = normalizedPlan;
+    }
+
+    if (response.changed && normalizedPlan) {
+      currentPlan.value = normalizedPlan;
+      backendPlanId.value = normalizedPlan.id;
+
+      if (currentSession.value) {
+        currentSession.value.planUsed = normalizedPlan;
+      }
+    }
+
+    return response;
+  }
+
+  function applyLocalSessionEnd() {
+    if (currentSession.value && !currentSession.value.endTime) {
+      currentSession.value.endTime = new Date();
+      currentSession.value.finalEmotion = latestEmotion.value;
+    }
+
+    isTherapyActive.value = false;
+    isPaused.value = false;
+  }
+
+  async function stopNowSession() {
+    if (!backendSessionId.value) {
+      return;
+    }
+
+    if (pendingStopNowRequest) {
+      await pendingStopNowRequest;
+      return;
+    }
+
+    const sessionId = backendSessionId.value;
+    pendingStopNowRequest = therapyApi
+      .stopNowTherapy(sessionId)
+      .then(() => undefined)
+      .catch((err) => {
+        console.error("Backend stop-now failed:", err);
+      })
+      .finally(() => {
+        pendingStopNowRequest = null;
+      });
+
+    await pendingStopNowRequest;
   }
 
   async function endSession() {
-    if (currentSession.value) {
-      currentSession.value.endTime = new Date()
-      currentSession.value.finalEmotion = latestEmotion.value
-    }
-    // 通知后端结束
-    if (backendSessionId.value) {
-      try {
-        await therapyApi.endTherapy(backendSessionId.value)
-      } catch (err) {
-        console.error('后端结束会话失败:', err)
-      }
-    }
-    isTherapyActive.value = false
-    isPaused.value = false
+    applyLocalSessionEnd();
   }
 
-  // 从后端获取报告
   async function fetchReport() {
-    if (!backendSessionId.value) return null
+    if (!backendSessionId.value) return null;
+
     try {
-      return await reportApi.getReport(backendSessionId.value)
+      return await reportApi.getReport(backendSessionId.value);
     } catch (err) {
-      console.error('获取报告失败:', err)
-      return null
+      console.error("Fetch report failed:", err);
+      return null;
     }
   }
 
   function resetSession() {
-    currentSession.value = null
-    emotionHistory.value = []
-    currentPlan.value = null
-    isTherapyActive.value = false
-    isPaused.value = false
-    backendSessionId.value = null
-    backendPlanId.value = null
+    clearSessionState();
   }
 
   return {
@@ -145,8 +321,10 @@ export const useSessionStore = defineStore('session', () => {
     addEmotionRecord,
     pauseTherapy,
     resumeTherapy,
+    adjustTherapyIntensity,
+    stopNowSession,
     endSession,
     fetchReport,
-    resetSession
-  }
-})
+    resetSession,
+  };
+});

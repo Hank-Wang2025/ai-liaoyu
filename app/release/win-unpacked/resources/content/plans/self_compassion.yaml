@@ -1,0 +1,93 @@
+# 自我关怀方案
+id: self_compassion
+name: 温柔以待 - 自我关怀
+description: 培养自我关怀和自我接纳的方案，帮助建立更健康的自我关系
+target_emotions:
+  - sad
+  - anxious
+  - neutral
+intensity: medium
+style: modern
+duration: 1200  # 20分钟
+
+phases:
+  - name: 自我觉察
+    duration: 300  # 5分钟
+    light:
+      color: "#DDA0DD"  # 梅红色
+      brightness: 45
+      transition: 5000
+      pattern: static
+    audio:
+      file: content/audio/gentle_harp.mp3
+      volume: 50
+      loop: true
+      fade_in: 4000
+      fade_out: 2000
+    visual:
+      file: content/visual/soft_petals.mp4
+      loop: true
+      brightness: 70
+    voice_guide:
+      text: 在这个时刻，让我们把关注转向自己。你值得被温柔以待，首先是被自己温柔以待。让我们一起练习自我关怀...
+      voice: 中文女
+      emotion: warm
+      speed: 0.9
+    chair:
+      mode: gentle
+      intensity: 3
+    scent:
+      scent_type: rose
+      intensity: 4
+
+  - name: 慈心冥想
+    duration: 540  # 9分钟
+    light:
+      color: "#FFB6C1"  # 浅粉色
+      brightness: 55
+      transition: 4000
+      pattern: breath
+    audio:
+      file: content/audio/loving_kindness.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/heart_glow.mp4
+      loop: true
+      brightness: 75
+    voice_guide:
+      text: 把一只手放在心口。感受心跳的温暖。对自己说：愿我平安，愿我健康，愿我快乐，愿我自在。重复这些祝福，让它们渗透到内心深处...
+      voice: 中文女
+      emotion: warm
+      speed: 0.85
+    chair:
+      mode: wave
+      intensity: 4
+
+  - name: 接纳与释放
+    duration: 360  # 6分钟
+    light:
+      color: "#FFC0CB"  # 粉色
+      brightness: 60
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/acceptance_melody.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 3000
+    visual:
+      file: content/visual/butterfly_garden.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 你已经足够好了。不需要完美，不需要证明什么。你的存在本身就是有价值的。带着这份自我接纳，继续前行...
+      voice: 中文女
+      emotion: encouraging
+      speed: 0.9
+    chair:
+      mode: relax
+      intensity: 3

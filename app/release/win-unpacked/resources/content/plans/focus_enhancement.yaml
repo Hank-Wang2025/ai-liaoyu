@@ -1,0 +1,90 @@
+# 专注力提升方案
+id: focus_enhancement
+name: 清心凝神 - 专注力提升
+description: 帮助提升专注力和清晰度的方案，适合工作学习前使用
+target_emotions:
+  - tired
+  - neutral
+  - anxious
+intensity: low
+style: modern
+duration: 600  # 10分钟
+
+phases:
+  - name: 清理杂念
+    duration: 180  # 3分钟
+    light:
+      color: "#E0FFFF"  # 淡青色
+      brightness: 60
+      transition: 3000
+      pattern: static
+    audio:
+      file: content/audio/focus_binaural.mp3
+      volume: 45
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/clear_water.mp4
+      loop: true
+      brightness: 80
+    voice_guide:
+      text: 让我们清理心中的杂念。想象你的思绪是天空中的云朵，让它们慢慢飘过，不需要抓住任何一朵...
+      voice: 中文女
+      emotion: calm
+      speed: 0.95
+    chair:
+      mode: gentle
+      intensity: 2
+
+  - name: 能量聚焦
+    duration: 240  # 4分钟
+    light:
+      color: "#00CED1"  # 深青色
+      brightness: 70
+      transition: 2000
+      pattern: pulse
+    audio:
+      file: content/audio/alpha_waves.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/geometric_flow.mp4
+      loop: true
+      brightness: 85
+    voice_guide:
+      text: 现在，把所有的注意力集中到一点。想象一束光从头顶照入，照亮你的思维，带来清晰和专注...
+      voice: 中文女
+      emotion: encouraging
+      speed: 1.0
+    chair:
+      mode: pulse
+      intensity: 3
+
+  - name: 准备就绪
+    duration: 180  # 3分钟
+    light:
+      color: "#AFEEEE"  # 淡绿松石
+      brightness: 75
+      transition: 2000
+      pattern: static
+    audio:
+      file: content/audio/clarity_tones.mp3
+      volume: 50
+      loop: true
+      fade_in: 2000
+      fade_out: 2000
+    visual:
+      file: content/visual/bright_horizon.mp4
+      loop: true
+      brightness: 90
+    voice_guide:
+      text: 很好！你的思维现在清晰而专注。带着这份清明，你已经准备好迎接任何挑战。去创造精彩吧！
+      voice: 中文女
+      emotion: encouraging
+      speed: 1.0
+    chair:
+      mode: gentle
+      intensity: 2

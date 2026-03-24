@@ -1,0 +1,149 @@
+<style>
+  .toolbar-preview {
+    border-radius: 18px;
+    padding: 16px;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .toolbar-preview--dark {
+    background: #172443;
+  }
+  .toolbar-preview--light {
+    background: #f4f2ef;
+  }
+  .therapy-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .therapy-bar--row {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .circle-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #1f4c7f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .text-btn {
+    min-width: 110px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid #d8d2ca;
+    background: #ffffff;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0 16px;
+  }
+  .text-btn--light {
+    background: #f7f5f2;
+  }
+  .text-btn--danger {
+    color: #111;
+  }
+  .pill-btn {
+    min-width: 122px;
+    height: 42px;
+    border-radius: 999px;
+    background: #244f82;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 18px;
+    font-size: 15px;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .chip-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .chip-btn {
+    min-width: 88px;
+    height: 36px;
+    border-radius: 999px;
+    padding: 0 14px;
+    background: rgba(255,255,255,0.08);
+    color: #f3f6fb;
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 14px;
+  }
+</style>
+
+<h2>疗愈页四个控制按钮改成哪种更合适？</h2>
+<p class="subtitle">我按你的参考图做了 3 个方向。推荐 A，因为最接近你发的目标样式，也最容易让客户看懂。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="toolbar-preview toolbar-preview--light">
+        <div class="therapy-bar therapy-bar--row">
+          <div class="text-btn text-btn--light">⏸ 暂停</div>
+          <div class="text-btn text-btn--light">🌿 更放松</div>
+          <div class="text-btn text-btn--light">💪 更有力</div>
+          <div class="text-btn text-btn--danger">■ 结束</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A - 文字操作条（推荐）</h3>
+      <p>直接改成你给的那种横向文字按钮，客户一眼能看懂每个动作。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="toolbar-preview toolbar-preview--dark">
+        <div class="therapy-bar">
+          <div class="pill-btn">⏸ 暂停</div>
+          <div class="pill-btn">🌿 更放松</div>
+          <div class="pill-btn">💪 更有力</div>
+          <div class="pill-btn">■ 结束</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B - 深色药丸按钮</h3>
+      <p>保留当前深色疗愈氛围，只把四个圆形按钮改成带文字的药丸按钮。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="toolbar-preview toolbar-preview--dark">
+        <div class="chip-row">
+          <div class="chip-btn">⏸ 暂停</div>
+          <div class="chip-btn">🌿 放松</div>
+          <div class="chip-btn">💪 有力</div>
+          <div class="chip-btn">■ 结束</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C - 紧凑胶囊按钮</h3>
+      <p>更省空间，但文字表达会更短，适合你想让控制区更轻一点的情况。</p>
+    </div>
+  </div>
+</div>

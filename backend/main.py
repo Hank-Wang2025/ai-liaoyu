@@ -3,14 +3,15 @@
 Healing Pod System - FastAPI Backend Entry Point
 """
 from contextlib import asynccontextmanager
+from importlib import import_module
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.routing import APIRouter
 from loguru import logger
 import sys
 import time
 
-from api import emotion_router, therapy_router, device_router, session_router, admin_router, community_router
 from db.database import init_db, close_db
 
 
@@ -27,6 +28,16 @@ logger.add(
     retention="30 days",
     level="DEBUG"
 )
+
+
+def load_router(module_name: str) -> APIRouter | None:
+    """按模块单独加载路由，单个组件失败时进入降级模式。"""
+    try:
+        module = import_module(module_name)
+        return getattr(module, "router")
+    except Exception as exc:
+        logger.warning(f"Skipping router {module_name} due to import failure: {exc}")
+        return None
 
 
 @asynccontextmanager
@@ -80,12 +91,17 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # Register routers
-app.include_router(emotion_router, prefix="/api/emotion", tags=["Emotion"])
-app.include_router(therapy_router, prefix="/api/therapy", tags=["Therapy"])
-app.include_router(device_router, prefix="/api/device", tags=["Device"])
-app.include_router(session_router, prefix="/api/session", tags=["Session"])
-app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
-app.include_router(community_router, tags=["Community"])
+for module_name, prefix, tags in [
+    ("api.emotion", "/api/emotion", ["Emotion"]),
+    ("api.therapy", "/api/therapy", ["Therapy"]),
+    ("api.device", "/api/device", ["Device"]),
+    ("api.session", "/api/session", ["Session"]),
+    ("api.admin", "/api/admin", ["Admin"]),
+    ("api.community", "", ["Community"]),
+]:
+    router = load_router(module_name)
+    if router is not None:
+        app.include_router(router, prefix=prefix, tags=tags)
 
 
 @app.get("/")
